@@ -6,4 +6,4 @@ FIND_PACKAGE(ITK REQUIRED)
 INCLUDE(${ITK_USE_FILE})
  
 add_library(PatchComparison DiffusionDistance.cpp)
-target_link_libraries(${ITK_LIBRARIES})
+target_link_libraries(PatchComparison ${ITK_LIBRARIES})
