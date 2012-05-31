@@ -11,7 +11,8 @@ int main(int argc, char* argv[])
   std::string inputFileName = argv[1];
   std::string outputFileName = argv[2];
 
-  typedef itk::VectorImage<float, 2> ImageType;
+  //typedef itk::VectorImage<float, 2> ImageType;
+  typedef itk::Image<itk::CovariantVector<float, 3>, 2> ImageType;
 
   typedef itk::ImageFileReader<ImageType> ReaderType;
   ReaderType::Pointer reader = ReaderType::New();
@@ -30,13 +31,18 @@ int main(int argc, char* argv[])
   zeroVector.Fill(0);
   output->FillBuffer(zeroVector);
 
-  SSD ssd;
+  //SSD ssd;
+  SSD<3> ssd;
+
   for(unsigned int i = 0 ; i < allPatches.size(); ++i)
   {
+    std::cout << i << " of " << allPatches.size() << std::endl;
+
     float minDistance = std::numeric_limits<float>::max();
     unsigned int bestId = 0;
     for(unsigned int j = 0 ; j < allPatches.size(); ++j)
     {
+      //std::cout << j << " of " << allPatches.size() << std::endl;
       // Don't compare a patch to itself
       if(i == j)
       {

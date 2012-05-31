@@ -1,10 +1,14 @@
-#include "SSD.h"
+#ifndef SSD_HPP
+#define SSD_HPP
 
-#include "itkImageRegionConstIterator.h"
+#include "SSD.h"
 
 #include "PixelDifferences.h"
 
-float SSDGeneral::operator()(const ImageType* const image, const itk::ImageRegion<2>& region1, const itk::ImageRegion<2>& region2)
+#include "itkImageRegionConstIterator.h"
+
+template <unsigned int TDimension>
+float SSD<TDimension>::operator()(const ImageType* const image, const itk::ImageRegion<2>& region1, const itk::ImageRegion<2>& region2)
 {
   assert(region1.GetSize() == region2.GetSize());
   assert(image->GetLargestPossibleRegion().IsInside(region1));
@@ -15,15 +19,15 @@ float SSDGeneral::operator()(const ImageType* const image, const itk::ImageRegio
 
   float sumSquaredDifferences = 0;
 
-  ImageType::PixelType pixel1;
-  ImageType::PixelType pixel2;
+  typename ImageType::PixelType pixel1;
+  typename ImageType::PixelType pixel2;
 
   while(!patch1Iterator.IsAtEnd())
     {
     pixel1 = patch1Iterator.Get();
     pixel2 = patch2Iterator.Get();
 
-    SumOfSquaredDifferencesGeneral sumOfSquaredDifferencesFunctor;
+    SumOfSquaredDifferences<TDimension> sumOfSquaredDifferencesFunctor;
     float squaredDifference = sumOfSquaredDifferencesFunctor(pixel1, pixel2);
 
 //       std::cout << "Source pixel: " << static_cast<unsigned int>(sourcePixel)
@@ -43,3 +47,5 @@ float SSDGeneral::operator()(const ImageType* const image, const itk::ImageRegio
 
   return averageSSD;
 }
+
+#endif

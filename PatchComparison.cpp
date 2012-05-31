@@ -17,7 +17,7 @@ PatchComparison::PatchComparison()
 
 float PatchComparison::ComputeAverageSSD(const itk::ImageRegion<2>& region1, const itk::ImageRegion<2>& region2)
 {
-  SSD ssd;
+  SSDGeneral ssd;
   return ssd(this->Image.GetPointer(), region1, region2);
 }
 

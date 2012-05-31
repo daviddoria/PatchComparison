@@ -3,10 +3,17 @@
 
 #include <cmath>
 
-struct SumOfSquaredDifferences
+struct SumOfSquaredDifferencesGeneral
 {
   template <typename TPixel>
   float operator()(const TPixel &a, const TPixel &b);
+};
+
+template <unsigned int TDimension>
+struct SumOfSquaredDifferences
+{
+  typedef itk::CovariantVector<float, TDimension> PixelType;
+  float operator()(const PixelType &a, const PixelType &b);
 };
 
 
