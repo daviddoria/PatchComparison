@@ -13,5 +13,7 @@ INCLUDE(${ITK_USE_FILE})
 add_subdirectory(EigenHelpers)
 add_subdirectory(Mask)
 
-add_library(PatchComparison DiffusionDistance.cpp)
+add_library(PatchComparison
+PatchComparison.cpp
+DiffusionDistance.cpp)
 target_link_libraries(PatchComparison ${ITK_LIBRARIES})
