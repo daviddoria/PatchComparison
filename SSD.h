@@ -1,8 +1,13 @@
 #ifndef SSD_H
 #define SSD_H
 
-typedef itk::VectorImage<float, 2> ImageType;
+#include "itkVectorImage.h"
 
-float AverageSSD(const ImageType* const image, const itk::ImageRegion<2>& region1, const itk::ImageRegion<2>& region2);
+struct SSD
+{
+  typedef itk::VectorImage<float, 2> ImageType;
+
+  float operator()(const ImageType* const image, const itk::ImageRegion<2>& region1, const itk::ImageRegion<2>& region2);
+};
 
 #endif

@@ -15,5 +15,9 @@ add_subdirectory(Mask)
 
 add_library(PatchComparison
 PatchComparison.cpp
-DiffusionDistance.cpp)
-target_link_libraries(PatchComparison ${ITK_LIBRARIES})
+DiffusionDistance.cpp
+SSD.cpp)
+target_link_libraries(PatchComparison ${ITK_LIBRARIES} ITKHelpers)
+
+add_executable(PotentialBadMatches PotentialBadMatches.cpp)
+target_link_libraries(PotentialBadMatches PatchComparison)

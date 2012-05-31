@@ -16,4 +16,6 @@ struct SumOfAbsoluteDifferences
   float operator()(const TPixel &a, const TPixel &b);
 };
 
+#include "PixelDifferences.hpp"
+
 #endif

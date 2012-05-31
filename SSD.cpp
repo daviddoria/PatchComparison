@@ -1,8 +1,10 @@
 #include "SSD.h"
 
+#include "itkImageRegionConstIterator.h"
+
 #include "PixelDifferences.h"
 
-float AverageSSD(const ImageType* const image, const itk::ImageRegion<2>& region1, const itk::ImageRegion<2>& region2)
+float SSD::operator()(const ImageType* const image, const itk::ImageRegion<2>& region1, const itk::ImageRegion<2>& region2)
 {
   assert(region1.GetSize() == region2.GetSize());
   assert(image->GetLargestPossibleRegion().IsInside(region1));
@@ -20,7 +22,8 @@ float AverageSSD(const ImageType* const image, const itk::ImageRegion<2>& region
     ImageType::PixelType pixel1 = patch1Iterator.Get();
     ImageType::PixelType pixel2 = patch2Iterator.Get();
 
-    float squaredDifference = SumOfSquaredDifferences(pixel1, pixel2);
+    SumOfSquaredDifferences sumOfSquaredDifferencesFunctor;
+    float squaredDifference = sumOfSquaredDifferencesFunctor(pixel1, pixel2);
 
 //       std::cout << "Source pixel: " << static_cast<unsigned int>(sourcePixel)
 //                 << " target pixel: " << static_cast<unsigned int>(targetPixel)
