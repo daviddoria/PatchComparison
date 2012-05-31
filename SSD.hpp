@@ -24,8 +24,10 @@ float SSD<TDimension>::operator()(const ImageType* const image, const itk::Image
 
   while(!patch1Iterator.IsAtEnd())
     {
-    pixel1 = patch1Iterator.Get();
-    pixel2 = patch2Iterator.Get();
+//     pixel1 = patch1Iterator.Get();
+//     pixel2 = patch2Iterator.Get();
+    pixel1 = *patch1Iterator;
+    pixel2 = *patch2Iterator;
 
     SumOfSquaredDifferences<TDimension> sumOfSquaredDifferencesFunctor;
     float squaredDifference = sumOfSquaredDifferencesFunctor(pixel1, pixel2);

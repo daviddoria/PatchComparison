@@ -19,6 +19,8 @@ int main(int argc, char* argv[])
   reader->SetFileName(inputFileName);
   reader->Update();
 
+  ImageType* image = reader->GetOutput();
+
   const unsigned int patchRadius = 7;
 
   std::vector<itk::ImageRegion<2> > allPatches = ITKHelpers::GetAllPatches(reader->GetOutput()->GetLargestPossibleRegion(), patchRadius);
@@ -31,16 +33,19 @@ int main(int argc, char* argv[])
   zeroVector.Fill(0);
   output->FillBuffer(zeroVector);
 
-  //SSD ssd;
-  SSD<3> ssd;
-
-  for(unsigned int i = 0 ; i < allPatches.size(); ++i)
+  for(unsigned int i = 0; i < allPatches.size(); ++i)
   {
     std::cout << i << " of " << allPatches.size() << std::endl;
 
     float minDistance = std::numeric_limits<float>::max();
     unsigned int bestId = 0;
-    for(unsigned int j = 0 ; j < allPatches.size(); ++j)
+
+    itk::ImageRegionConstIterator<ImageType> patch1Iterator(image, allPatches[i]);
+
+    typename ImageType::PixelType pixel1;
+    typename ImageType::PixelType pixel2;
+
+    for(unsigned int j = 0; j < allPatches.size(); ++j)
     {
       //std::cout << j << " of " << allPatches.size() << std::endl;
       // Don't compare a patch to itself
@@ -49,10 +54,34 @@ int main(int argc, char* argv[])
         continue;
       }
 
-      float distance = ssd(reader->GetOutput(), allPatches[i], allPatches[j]);
-      if(distance < minDistance)
+      patch1Iterator.GoToBegin();
+      itk::ImageRegionConstIterator<ImageType> patch2Iterator(image, allPatches[j]);
+
+      float sumSquaredDifferences = 0.0f;
+      float distance = 0.0f;
+
+      while(!patch1Iterator.IsAtEnd())
+        {
+        pixel1 = patch1Iterator.Get();
+        pixel2 = patch2Iterator.Get();
+
+        distance = (pixel1[0] - pixel2[0]) * (pixel1[0] - pixel2[0]) +
+                        (pixel1[1] - pixel2[1]) * (pixel1[1] - pixel2[1]) +
+                        (pixel1[2] - pixel2[2]) * (pixel1[2] - pixel2[2]);
+
+        //       std::cout << "Source pixel: " << static_cast<unsigned int>(sourcePixel)
+        //                 << " target pixel: " << static_cast<unsigned int>(targetPixel)
+        //                 << "Difference: " << difference << " squaredDifference: " << squaredDifference << std::endl;
+
+        sumSquaredDifferences +=  distance;
+
+        ++patch1Iterator;
+        ++patch2Iterator;
+        } // end while iterate over patch
+
+      if(sumSquaredDifferences < minDistance)
       {
-        minDistance = distance;
+        minDistance = sumSquaredDifferences;
         bestId = j;
       }
     } // end loop j
