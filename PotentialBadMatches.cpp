@@ -8,8 +8,17 @@
 
 int main(int argc, char* argv[])
 {
-  std::string inputFileName = argv[1];
-  std::string outputFileName = argv[2];
+  if(argc < 4)
+  {
+    std::cerr << "Required arguments: inputFileName patchRadius outputFileName" << std::endl;
+    return EXIT_FAILURE;
+  }
+  std::stringstream ss;
+  ss << argv[1] << " " << argv[2] << " " << argv[3];
+  std::string inputFileName;
+  unsigned int patchRadius;
+  std::string outputFileName;
+  ss >> inputFileName >> patchRadius >> outputFileName;
 
   //typedef itk::VectorImage<float, 2> ImageType;
   typedef itk::Image<itk::CovariantVector<float, 3>, 2> ImageType;
@@ -20,8 +29,6 @@ int main(int argc, char* argv[])
   reader->Update();
 
   ImageType* image = reader->GetOutput();
-
-  const unsigned int patchRadius = 7;
 
   std::vector<itk::ImageRegion<2> > allPatches = ITKHelpers::GetAllPatches(reader->GetOutput()->GetLargestPossibleRegion(), patchRadius);
 
