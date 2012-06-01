@@ -21,3 +21,6 @@ target_link_libraries(PatchComparison ${ITK_LIBRARIES} ITKHelpers)
 
 add_executable(PotentialBadMatches PotentialBadMatches.cpp)
 target_link_libraries(PotentialBadMatches PatchComparison)
+
+add_executable(CompareBadPatches CompareBadPatches.cpp)
+target_link_libraries(CompareBadPatches PatchComparison)

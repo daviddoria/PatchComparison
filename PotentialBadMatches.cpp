@@ -10,15 +10,17 @@ int main(int argc, char* argv[])
 {
   if(argc < 4)
   {
-    std::cerr << "Required arguments: inputFileName patchRadius outputFileName" << std::endl;
+    std::cerr << "Required arguments: inputFileName patchRadius stride" << std::endl;
     return EXIT_FAILURE;
   }
   std::stringstream ss;
   ss << argv[1] << " " << argv[2] << " " << argv[3];
   std::string inputFileName;
   unsigned int patchRadius;
-  std::string outputFileName;
-  ss >> inputFileName >> patchRadius >> outputFileName;
+  unsigned int stride;
+  ss >> inputFileName >> patchRadius >> stride;
+
+  std::cout << "Running on " << inputFileName << " with patchRadius = " << patchRadius << " and stride = " << stride << std::endl;
 
   //typedef itk::VectorImage<float, 2> ImageType;
   typedef itk::Image<itk::CovariantVector<float, 3>, 2> ImageType;
@@ -32,18 +34,32 @@ int main(int argc, char* argv[])
 
   std::vector<itk::ImageRegion<2> > allPatches = ITKHelpers::GetAllPatches(reader->GetOutput()->GetLargestPossibleRegion(), patchRadius);
 
-  typedef itk::Image<itk::CovariantVector<float, 3>, 2> OutputImageType; // (x, y, score)
-  OutputImageType::Pointer output = OutputImageType::New();
-  output->SetRegions(reader->GetOutput()->GetLargestPossibleRegion());
-  output->Allocate();
   itk::CovariantVector<float, 3> zeroVector;
   zeroVector.Fill(0);
-  output->FillBuffer(zeroVector);
+
+  typedef itk::Image<itk::CovariantVector<float, 3>, 2> OutputImageType; // (x, y, score)
+
+  OutputImageType::Pointer locationField = OutputImageType::New();
+  locationField->SetRegions(reader->GetOutput()->GetLargestPossibleRegion());
+  locationField->Allocate();
+  locationField->FillBuffer(zeroVector);
+
+
+  OutputImageType::Pointer offsetField = OutputImageType::New();
+  offsetField->SetRegions(reader->GetOutput()->GetLargestPossibleRegion());
+  offsetField->Allocate();
+  zeroVector.Fill(0);
+  offsetField->FillBuffer(zeroVector);
 
   for(unsigned int i = 0; i < allPatches.size(); ++i)
   {
     std::cout << i << " of " << allPatches.size() << std::endl;
 
+    if(allPatches[i].GetIndex()[0] % stride != 0 ||
+       allPatches[i].GetIndex()[1] % stride != 0)
+    {
+      continue;
+    }
     float minDistance = std::numeric_limits<float>::max();
     unsigned int bestId = 0;
 
@@ -93,15 +109,32 @@ int main(int argc, char* argv[])
       }
     } // end loop j
 
-    itk::CovariantVector<float, 3> outputPixel;
-    outputPixel[0] = allPatches[bestId].GetIndex()[0];
-    outputPixel[1] = allPatches[bestId].GetIndex()[1];
-    outputPixel[2] = minDistance;
+    // Location
+    itk::CovariantVector<float, 3> locationPixel;
+    locationPixel[0] = allPatches[bestId].GetIndex()[0];
+    locationPixel[1] = allPatches[bestId].GetIndex()[1];
+    locationPixel[2] = minDistance;
 
-    output->SetPixel(allPatches[i].GetIndex(), outputPixel);
+    locationField->SetPixel(allPatches[i].GetIndex(), locationPixel);
+
+    // Offset
+    itk::Offset<2> offset = allPatches[bestId].GetIndex() - allPatches[i].GetIndex();
+
+    itk::CovariantVector<float, 3> offsetPixel;
+    offsetPixel[0] = offset[0];
+    offsetPixel[1] = offset[1];
+    offsetPixel[2] = minDistance;
+
+    offsetField->SetPixel(allPatches[i].GetIndex(), offsetPixel);
   } // end loop i
 
-  ITKHelpers::WriteImage(output.GetPointer(), outputFileName);
+  std::stringstream ssLocation;
+  ssLocation << "Location_" << patchRadius << "_" << stride << ".mha";
+  ITKHelpers::WriteImage(locationField.GetPointer(), ssLocation.str());
+
+  std::stringstream ssOffset;
+  ssOffset << "Offset_" << patchRadius << "_" << stride << ".mha";
+  ITKHelpers::WriteImage(offsetField.GetPointer(), ssOffset.str());
 
   return EXIT_SUCCESS;
 }
