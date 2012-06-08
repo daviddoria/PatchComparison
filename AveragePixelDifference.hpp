@@ -6,7 +6,6 @@
 
 // Submodules
 #include "Mask/ITKHelpers/ITKHelpers.h"
-#include "Mask/ITKHelpers/ITKStatistics.h"
 
 /**
   * Compute the difference between the averages of each patch.
