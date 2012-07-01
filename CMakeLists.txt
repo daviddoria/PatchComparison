@@ -10,6 +10,10 @@ include_directories(/media/portable/src/Eigen)
 FIND_PACKAGE(ITK REQUIRED)
 INCLUDE(${ITK_USE_FILE})
 
+# VTK (this is required if ITK is built with ITKVtkGlue (I think this should be considered a bug...))
+FIND_PACKAGE(VTK REQUIRED)
+INCLUDE(${VTK_USE_FILE})
+
 # Submodules
 if(NOT TARGET EigenHelpers)
   add_subdirectory(EigenHelpers)

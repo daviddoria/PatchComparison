@@ -49,7 +49,8 @@ float VarianceWeightedSSD::operator()(const itk::VectorImage<TPixel, 2>* const i
     itk::ImageRegion<2> region =
            ITKHelpers::GetRegionInRadiusAroundPixel(region1Iterator.GetIndex(), region1.GetSize()[0]/2);
 
-    float variance = ITKHelpers::VarianceInRegion(image, region);
+    typename ImageType::PixelType varianceVector = ITKHelpers::VarianceInRegion(image, region);
+    float variance = ITKHelpers::SumOfComponents(varianceVector);
     weightVector[pixelCounter] = variance;
     pixelCounter++;
     ++region1Iterator;
@@ -58,7 +59,8 @@ float VarianceWeightedSSD::operator()(const itk::VectorImage<TPixel, 2>* const i
   // TODO: Normalize weight vector
   Helpers::NormalizeVector(weightVector);
 
-  return WeightedSSD(image, region1, region2, weightVector);
+  WeightedSSD weightedSSD;
+  return weightedSSD(image, region1, region2, weightVector);
 }
 
 template <typename TPixel>

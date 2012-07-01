@@ -42,13 +42,11 @@ float WeightedSSD::operator()(const itk::VectorImage<TPixel, 2>* const image,
 
   float sumDifferences = 0.0f;
 
-  SSDGeneral ssdFunctor;
-
   unsigned int pixelCounter = 0;
   while(!region1Iterator.IsAtEnd())
     {
     float difference = weights[pixelCounter] *
-                       ssdFunctor(region1Iterator.Get() - region2Iterator.Get());
+                       (region1Iterator.Get() - region2Iterator.Get()).GetSquaredNorm();
 
     sumDifferences +=  difference;
 
