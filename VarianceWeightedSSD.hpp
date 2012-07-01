@@ -34,7 +34,27 @@ float VarianceWeightedSSD::operator()(const itk::VectorImage<TPixel, 2>* const i
                   const itk::ImageRegion<2>& region1, const itk::ImageRegion<2>& region2)
 {
   // Compute the variance image in the required regions
-  throw std::runtime_error("VarianceWeightedSSD not yet implemented!");
+  typedef itk::VectorImage<TPixel, 2> ImageType;
+
+  std::vector<float> weightVector(region1.GetNumberOfPixels());
+
+  itk::ImageRegionConstIterator<ImageType> region1Iterator(image, region1);
+
+  unsigned int pixelCounter = 0;
+  while(!region1Iterator.IsAtEnd())
+    {
+    itk::ImageRegion<2> region =
+           ITKHelpers::GetRegionInRadiusAroundPixel(region1Iterator.GetIndex(), region1.GetSize()[0]/2);
+
+    float variance = ITKHelpers::VarianceInRegion(image, region);
+    weightVector[pixelCounter] = variance;
+    pixelCounter++;
+    ++region1Iterator;
+    }
+
+  // TODO: Normalize weight vector
+  
+  return WeightedSSD(image, region1, region2, weightVector);
 }
 
 template <typename TPixel>
@@ -47,7 +67,8 @@ float VarianceWeightedSSD::operator()(const itk::VectorImage<TPixel, 2>* const i
 
   // Multiple use filter types
   typedef itk::RegionOfInterestImageFilter<ImageType, ImageType> VarianceExtractFilterType;
-  typedef itk::NormalizeToConstantImageFilter<ImageType, ImageType> NormalizeVarianceToConstantImageFilterType;
+  typedef itk::NormalizeToConstantImageFilter<ImageType, ImageType>
+          NormalizeVarianceToConstantImageFilterType;
 
   // Normalize weights for patch 1
   typename VarianceExtractFilterType::Pointer extractVarianceFilter1 = VarianceExtractFilterType::New();
