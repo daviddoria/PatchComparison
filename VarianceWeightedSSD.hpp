@@ -21,6 +21,9 @@
 
 #include "VarianceWeightedSSD.h"
 
+// Submodules
+#include "Mask/ITKHelpers/Helpers/Helpers.h"
+
 // ITK
 #include "itkImageRegion.h"
 #include "itkRegionOfInterestImageFilter.h"
@@ -53,7 +56,8 @@ float VarianceWeightedSSD::operator()(const itk::VectorImage<TPixel, 2>* const i
     }
 
   // TODO: Normalize weight vector
-  
+  Helpers::NormalizeVector(weightVector);
+
   return WeightedSSD(image, region1, region2, weightVector);
 }
 
@@ -70,40 +74,24 @@ float VarianceWeightedSSD::operator()(const itk::VectorImage<TPixel, 2>* const i
   typedef itk::NormalizeToConstantImageFilter<ImageType, ImageType>
           NormalizeVarianceToConstantImageFilterType;
 
-  // Normalize weights for patch 1
-  typename VarianceExtractFilterType::Pointer extractVarianceFilter1 = VarianceExtractFilterType::New();
-  extractVarianceFilter1->SetRegionOfInterest(region1);
-  extractVarianceFilter1->SetInput(varianceImage);
-  extractVarianceFilter1->Update();
+  // Normalize weights for patch
+  typename VarianceExtractFilterType::Pointer extractVarianceFilter = VarianceExtractFilterType::New();
+  extractVarianceFilter->SetRegionOfInterest(region1);
+  extractVarianceFilter->SetInput(varianceImage);
+  extractVarianceFilter->Update();
 
-  typename NormalizeVarianceToConstantImageFilterType::Pointer normalizeVarianceFilter1 =
+  typename NormalizeVarianceToConstantImageFilterType::Pointer normalizeVarianceFilter =
            NormalizeVarianceToConstantImageFilterType::New();
-  normalizeVarianceFilter1->SetInput(extractVarianceFilter1->GetOutput());
-  normalizeVarianceFilter1->SetConstant(1.0f);
-  normalizeVarianceFilter1->Update();
-
-  // Normalize weights for patch 2
-  typename VarianceExtractFilterType::Pointer extractVarianceFilter2 = VarianceExtractFilterType::New();
-  extractVarianceFilter2->SetRegionOfInterest(region2);
-  extractVarianceFilter2->SetInput(varianceImage);
-  extractVarianceFilter2->Update();
-
-  typename NormalizeVarianceToConstantImageFilterType::Pointer normalizeVarianceFilter2 =
-           NormalizeVarianceToConstantImageFilterType::New();
-  normalizeVarianceFilter2->SetInput(extractVarianceFilter2->GetOutput());
-  normalizeVarianceFilter2->SetConstant(1.0f);
-  normalizeVarianceFilter2->Update();
+  normalizeVarianceFilter->SetInput(extractVarianceFilter->GetOutput());
+  normalizeVarianceFilter->SetConstant(1.0f);
+  normalizeVarianceFilter->Update();
 
   // Sum the weighted differences
-
   itk::ImageRegionConstIterator<ImageType> region1Iterator(image, region1);
   itk::ImageRegionConstIterator<ImageType> region2Iterator(image, region2);
   itk::ImageRegionConstIterator<VarianceImageType>
-         weights1Iterator(normalizeVarianceFilter1->GetOutput(),
-                          normalizeVarianceFilter1->GetOutput()->GetLargestPossibleRegion());
-  itk::ImageRegionConstIterator<VarianceImageType>
-         weights2Iterator(normalizeVarianceFilter2->GetOutput(),
-                          normalizeVarianceFilter2->GetOutput()->GetLargestPossibleRegion());
+         weightsIterator(normalizeVarianceFilter->GetOutput(),
+                         normalizeVarianceFilter->GetOutput()->GetLargestPossibleRegion());
 
   float sumDifferences = 0.0f;
 
@@ -112,15 +100,14 @@ float VarianceWeightedSSD::operator()(const itk::VectorImage<TPixel, 2>* const i
   unsigned int numberOfPixels = region1.GetNumberOfPixels();
   while(!region1Iterator.IsAtEnd())
     {
-    float difference = weights1Iterator.Get() * weights2Iterator.Get() *
+    float difference = weightsIterator.Get() *
                         ssdFunctor(region1Iterator.Get() - region2Iterator.Get());
 
     sumDifferences +=  difference;
 
     ++region1Iterator;
     ++region2Iterator;
-    ++weights1Iterator;
-    ++weights2Iterator;
+    ++weightsIterator;
     }
 
   float averageDifference = sumDifferences / static_cast<float>(numberOfPixels);

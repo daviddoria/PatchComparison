@@ -33,26 +33,57 @@ template <typename TPixel>
 float SelfDeviationWeightedSSD::operator()(const itk::VectorImage<TPixel, 2>* const image,
                   const itk::ImageRegion<2>& region1, const itk::ImageRegion<2>& region2)
 {
-  // Compute the variance image in the required regions
   typedef itk::VectorImage<TPixel, 2> ImageType;
 
+  std::vector<float> meanSquareDeviationVector(region1.GetNumberOfPixels());
   std::vector<float> weightVector(region1.GetNumberOfPixels());
 
-  itk::ImageRegionConstIterator<ImageType> region1Iterator(image, region1);
+  itk::ImageRegionConstIteratorWithIndex<ImageType> region1Iterator(image, region1);
 
   unsigned int pixelCounter = 0;
   while(!region1Iterator.IsAtEnd())
     {
-    itk::ImageRegion<2> region =
-           ITKHelpers::GetRegionInRadiusAroundPixel(region1Iterator.GetIndex(), region1.GetSize()[0]/2);
+    float sumDeviations = 0.0f;
+    itk::ImageRegionConstIteratorWithIndex<ImageType> deviationIterator(image, region1);
+    while(!deviationIterator.IsAtEnd())
+      {
+      if(deviationIterator.GetIndex() == region1Iterator.GetIndex())
+        {
+        ++deviationIterator;
+        continue;
+        }
+      sumDeviations += pow(region1Iterator.Get() - deviationIterator.Get(), 2);
+      ++deviationIterator
+      }
+    float meanSquareDeviation = sqrt(sumDeviations/region1.GetNumberOfPixels() - 1);
 
-    float variance = ITKHelpers::VarianceInRegion(image, region);
-    weightVector[pixelCounter] = variance;
+    meanSquareDeviationVector[pixelCounter] = meanSquareDeviation;
+
     pixelCounter++;
     ++region1Iterator;
     }
 
-  // TODO: Normalize weight vector
+  float sumAllDeviations = 0.0f;
+  for(unsigned int i = 0; i < meanSquareDeviationVector.size(); ++i)
+  {
+    sumAllDeviations += meanSquareDeviationVector[i];
+  }
+
+  float averageDeviation = sumAllDeviations / static_cast<float>(meanSquareDeviationVector.size());
+
+  float sumWeights = 0.0f;
+  for(unsigned int i = 0; i < meanSquareDeviationVector.size(); ++i)
+  {
+    weightVector[pixelCounter] = exp(-1.0f * (meanSquareDeviation[pixelCounter] - averageDeviation));
+    sumWeights += weightVector[pixelCounter];
+  }
+
+  // Normalize
+  for(unsigned int i = 0; i < weightVector.size(); ++i)
+  {
+    weightVector[i] = weightVector[i] / sumWeights;
+  }
+  
   return WeightedSSD(image, region1, region2, weightVector);
 }
 
