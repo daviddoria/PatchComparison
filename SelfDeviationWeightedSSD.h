@@ -34,12 +34,16 @@ class SelfDeviationWeightedSSD : public WeightedSSD
 {
 public:
 
-  template <typename TPixel>
-  float operator()(const itk::VectorImage<TPixel, 2>* const image,
+  template <typename TImage>
+  float operator()(const TImage* const image,
                    const itk::ImageRegion<2>& region1, const itk::ImageRegion<2>& region2);
 
-  template <typename TPixel>
-  static std::vector<float> ComputeWeights(const itk::VectorImage<TPixel, 2>* const image,
+  template <typename TImage>
+  static std::vector<float> ComputeWeights(const TImage* const image,
+                         const itk::ImageRegion<2>& region1);
+
+  template <typename TImage>
+  static std::vector<float> ComputeDeviations(const TImage* const image,
                          const itk::ImageRegion<2>& region1);
 };
 
