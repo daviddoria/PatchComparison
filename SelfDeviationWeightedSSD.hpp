@@ -21,8 +21,11 @@
 
 #include "SelfDeviationWeightedSSD.h"
 
+#include "SumOfSquaredDifferencesGeneral.h"
+
 // ITK
 #include "itkImageRegion.h"
+#include "itkImageRegionConstIteratorWithIndex.h"
 #include "itkRegionOfInterestImageFilter.h"
 #include "itkNormalizeToConstantImageFilter.h"
 
@@ -30,21 +33,23 @@
 #include <vector>
 
 template <typename TPixel>
-float SelfDeviationWeightedSSD::operator()(const itk::VectorImage<TPixel, 2>* const image,
-                  const itk::ImageRegion<2>& region1, const itk::ImageRegion<2>& region2)
+std::vector<float> SelfDeviationWeightedSSD::ComputeWeights(const itk::VectorImage<TPixel, 2>* const image,
+                         const itk::ImageRegion<2>& region)
 {
   typedef itk::VectorImage<TPixel, 2> ImageType;
 
-  std::vector<float> meanSquareDeviationVector(region1.GetNumberOfPixels());
-  std::vector<float> weightVector(region1.GetNumberOfPixels());
+  std::vector<float> meanSquareDeviationVector(region.GetNumberOfPixels());
+  std::vector<float> weightVector(region.GetNumberOfPixels());
 
-  itk::ImageRegionConstIteratorWithIndex<ImageType> region1Iterator(image, region1);
+  itk::ImageRegionConstIteratorWithIndex<ImageType> region1Iterator(image, region);
 
   unsigned int pixelCounter = 0;
+  SumOfSquaredDifferencesGeneral diffOperator;
+
   while(!region1Iterator.IsAtEnd())
     {
     float sumDeviations = 0.0f;
-    itk::ImageRegionConstIteratorWithIndex<ImageType> deviationIterator(image, region1);
+    itk::ImageRegionConstIteratorWithIndex<ImageType> deviationIterator(image, region);
     while(!deviationIterator.IsAtEnd())
       {
       if(deviationIterator.GetIndex() == region1Iterator.GetIndex())
@@ -52,10 +57,13 @@ float SelfDeviationWeightedSSD::operator()(const itk::VectorImage<TPixel, 2>* co
         ++deviationIterator;
         continue;
         }
-      sumDeviations += pow(region1Iterator.Get() - deviationIterator.Get(), 2);
-      ++deviationIterator
+
+      //sumDeviations += pow(region1Iterator.Get() - deviationIterator.Get(), 2);
+      sumDeviations += diffOperator(region1Iterator.Get(), deviationIterator.Get());
+
+      ++deviationIterator;
       }
-    float meanSquareDeviation = sqrt(sumDeviations/region1.GetNumberOfPixels() - 1);
+    float meanSquareDeviation = sqrt(sumDeviations/region.GetNumberOfPixels() - 1);
 
     meanSquareDeviationVector[pixelCounter] = meanSquareDeviation;
 
@@ -74,7 +82,7 @@ float SelfDeviationWeightedSSD::operator()(const itk::VectorImage<TPixel, 2>* co
   float sumWeights = 0.0f;
   for(unsigned int i = 0; i < meanSquareDeviationVector.size(); ++i)
   {
-    weightVector[pixelCounter] = exp(-1.0f * (meanSquareDeviation[pixelCounter] - averageDeviation));
+    weightVector[pixelCounter] = exp(-1.0f * (meanSquareDeviationVector[pixelCounter] - averageDeviation));
     sumWeights += weightVector[pixelCounter];
   }
 
@@ -83,8 +91,19 @@ float SelfDeviationWeightedSSD::operator()(const itk::VectorImage<TPixel, 2>* co
   {
     weightVector[i] = weightVector[i] / sumWeights;
   }
-  
-  return WeightedSSD(image, region1, region2, weightVector);
+
+  return weightVector;
+}
+
+template <typename TPixel>
+float SelfDeviationWeightedSSD::operator()(const itk::VectorImage<TPixel, 2>* const image,
+                  const itk::ImageRegion<2>& region1, const itk::ImageRegion<2>& region2)
+{
+  std::vector<float> weights = ComputeWeights(image, region1);
+
+  return WeightedSSD(image, region1, region2, weights);
 }
 
 #endif
+
+struct SumOfSquaredDifferencesGeneral;

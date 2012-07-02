@@ -6,7 +6,8 @@
 #include <cmath>
 
 template <typename TPixel>
-float SumOfSquaredDifferencesGeneral::operator()(const TPixel &a, const TPixel &b)
+float SumOfSquaredDifferencesGeneral::operator()(const itk::VariableLengthVector<TPixel> &a,
+                                                 const itk::VariableLengthVector<TPixel> &b)
 {
   float difference = 0;
 
@@ -17,6 +18,14 @@ float SumOfSquaredDifferencesGeneral::operator()(const TPixel &a, const TPixel &
     difference += diff * diff;
     }
   return difference;
+}
+
+template <typename TPixel>
+float SumOfSquaredDifferencesGeneral::operator()(const TPixel &a, const TPixel &b)
+{
+  // This assumes that TPixel is a scalar
+  float diff = a - b;
+  return diff * diff;
 }
 
 template <unsigned int TDimension>

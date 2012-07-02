@@ -38,6 +38,9 @@ public:
   float operator()(const itk::VectorImage<TPixel, 2>* const image,
                    const itk::ImageRegion<2>& region1, const itk::ImageRegion<2>& region2);
 
+  template <typename TPixel>
+  static std::vector<float> ComputeWeights(const itk::VectorImage<TPixel, 2>* const image,
+                         const itk::ImageRegion<2>& region1);
 };
 
 #include "SelfDeviationWeightedSSD.hpp"

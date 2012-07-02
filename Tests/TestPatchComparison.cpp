@@ -19,7 +19,8 @@ void TestSelfDeviationWeightedSSD()
   typedef itk::Image<unsigned char, 2> ImageType;
   ImageType::Pointer image = ImageType::New();
   itk::Index<2> corner = {{0,0}};
-  itk::Size<2> size = {{3,3}};
+  const unsigned int imageSize = 3;
+  itk::Size<2> size = {{imageSize,imageSize}};
   itk::ImageRegion<2> region(corner, size);
   image->SetRegions(region);
   image->Allocate();
@@ -31,7 +32,7 @@ void TestSelfDeviationWeightedSSD()
     */
   itk::Index<2> currentIndex = {{0,0}};
   image->SetPixel(currentIndex, 255);
-  
+
   currentIndex[0] = 0; currentIndex[1] = 1;
   image->SetPixel(currentIndex, 51);
 
@@ -48,7 +49,7 @@ void TestSelfDeviationWeightedSSD()
   image->SetPixel(currentIndex, 102);
 
   currentIndex[0] = 2; currentIndex[1] = 0;
-  image->SetPixel(currentIndex, 255;
+  image->SetPixel(currentIndex, 255);
 
   currentIndex[0] = 2; currentIndex[1] = 1;
   image->SetPixel(currentIndex, 77);
@@ -56,6 +57,16 @@ void TestSelfDeviationWeightedSSD()
   currentIndex[0] = 2; currentIndex[1] = 2;
   image->SetPixel(currentIndex, 99);
 
+  std::vector<float> weights = SelfDeviationWeightedSSD::ComputeWeights(image, image->GetLargestPossibleRegion());
+
+  for(unsigned int i = 0; i < weights.size(); ++i)
+  {
+    std::cout << weights[i] << " ";
+    if(i % imageSize == 0)
+    {
+      std::cout << std::endl;
+    }
+  }
   /* Expected deviations:
     145.19 124.99 90.60
     121.60 90.60 90.60
