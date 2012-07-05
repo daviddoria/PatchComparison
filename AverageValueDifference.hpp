@@ -1,8 +1,8 @@
-#ifndef AveragePixelDifference_HPP
-#define AveragePixelDifference_HPP
+#ifndef AverageValueDifference_HPP
+#define AverageValueDifference_HPP
 
 // Appease syntax parser
-#include "AveragePixelDifference.h"
+#include "AverageValueDifference.h"
 
 // Submodules
 #include "Mask/ITKHelpers/ITKHelpers.h"
@@ -12,7 +12,7 @@
  */
 
 template <typename TImage>
-float AveragePixelDifference::operator()(const TImage* const image,
+float AverageValueDifference::operator()(const TImage* const image,
                                          const itk::ImageRegion<2>& region1,
                                          const itk::ImageRegion<2>& region2)
 {

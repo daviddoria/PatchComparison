@@ -5,7 +5,7 @@
 
 #include "CorrelationScore.h"
 #include "SSD.h"
-#include "AveragePixelDifference.h"
+#include "AverageValueDifference.h"
 #include "VarianceDifference.h"
 #include "VarianceWeightedSSD.h"
 
@@ -21,10 +21,10 @@ float PatchComparison::ComputeAverageSSD(const itk::ImageRegion<2>& region1, con
   return ssd(this->Image.GetPointer(), region1, region2);
 }
 
-float PatchComparison::ComputeAveragePixelDifference(const itk::ImageRegion<2>& region1, const itk::ImageRegion<2>& region2)
+float PatchComparison::ComputeAverageValueDifference(const itk::ImageRegion<2>& region1, const itk::ImageRegion<2>& region2)
 {
-  AveragePixelDifference averagePixelDifference;
-  return averagePixelDifference(this->Image.GetPointer(), region1, region2);
+  AverageValueDifference averageValueDifference;
+  return averageValueDifference(this->Image.GetPointer(), region1, region2);
 }
 
 float PatchComparison::ComputeVarianceDifference(const itk::ImageRegion<2>& region1, const itk::ImageRegion<2>& region2)
