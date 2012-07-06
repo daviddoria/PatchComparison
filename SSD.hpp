@@ -49,5 +49,11 @@ float SSD<TDimension>::operator()(const ImageType* const image, const itk::Image
 
   return averageSSD;
 }
+template <unsigned int TDimension>
+float SSD<TDimension>::operator()(const itk::ImageRegion<2>& region1,
+                                  const itk::ImageRegion<2>& region2)
+{
+  return operator()(this->Image, region1, region2);
+}
 
 #endif

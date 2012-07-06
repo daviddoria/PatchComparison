@@ -17,8 +17,13 @@ struct SSD
 {
   typedef itk::Image<itk::CovariantVector<float, TDimension>, 2> ImageType;
 
+  float operator()(const itk::ImageRegion<2>& region1,
+                   const itk::ImageRegion<2>& region2);
+  
   float operator()(const ImageType* const image, const itk::ImageRegion<2>& region1,
                    const itk::ImageRegion<2>& region2);
+
+  ImageType* Image;
 };
 
 #include "SSD.hpp"

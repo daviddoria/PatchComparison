@@ -21,6 +21,10 @@ if(NOT TARGET Mask)
   add_subdirectory(Mask)
 endif()
 
+if(NOT TARGET PatchProjection)
+  add_subdirectory(PatchProjection)
+endif()
+
 add_library(PatchComparison
 PatchComparison.cpp
 DiffusionDistance.cpp
