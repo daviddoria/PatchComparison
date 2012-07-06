@@ -7,28 +7,26 @@
 
 #include "itkImageRegionConstIterator.h"
 
-template <unsigned int TDimension, typename TPixel>
-float SSD<itk::Image<itk::CovariantVector<TPixel, TDimension>, 2> >::Difference
-(const ImageType* const image, const itk::ImageRegion<2>& region1, const itk::ImageRegion<2>& region2)
+template <typename TImage>
+float SSD<TImage>::Difference
+(const TImage* const image, const itk::ImageRegion<2>& region1, const itk::ImageRegion<2>& region2)
 {
   assert(region1.GetSize() == region2.GetSize());
   assert(image->GetLargestPossibleRegion().IsInside(region1));
   assert(image->GetLargestPossibleRegion().IsInside(region2));
 
-  itk::ImageRegionConstIterator<ImageType> patch1Iterator(image, region1);
-  itk::ImageRegionConstIterator<ImageType> patch2Iterator(image, region2);
+  itk::ImageRegionConstIterator<TImage> patch1Iterator(image, region1);
+  itk::ImageRegionConstIterator<TImage> patch2Iterator(image, region2);
 
   float sumSquaredDifferences = 0;
 
-  typename ImageType::PixelType pixel1;
-  typename ImageType::PixelType pixel2;
+  typename TImage::PixelType pixel1;
+  typename TImage::PixelType pixel2;
 
   while(!patch1Iterator.IsAtEnd())
     {
-//     pixel1 = patch1Iterator.Get();
-//     pixel2 = patch2Iterator.Get();
-    pixel1 = *patch1Iterator;
-    pixel2 = *patch2Iterator;
+    pixel1 = patch1Iterator.Get();
+    pixel2 = patch2Iterator.Get();
 
     float squaredDifference = PixelDifferences::SumOfSquaredDifferences(pixel1, pixel2);
 
@@ -50,9 +48,9 @@ float SSD<itk::Image<itk::CovariantVector<TPixel, TDimension>, 2> >::Difference
   return averageSSD;
 }
 
-template <unsigned int TDimension, typename TPixel>
-float SSD<itk::Image<itk::CovariantVector<TPixel, TDimension>, 2> >::Difference(const itk::ImageRegion<2>& region1,
-                                  const itk::ImageRegion<2>& region2)
+template <typename TImage>
+float SSD<TImage>::Difference(const itk::ImageRegion<2>& region1,
+                              const itk::ImageRegion<2>& region2)
 {
   return operator()(this->Image, region1, region2);
 }
