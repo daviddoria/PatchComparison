@@ -4,23 +4,55 @@
 #include "itkImage.h"
 #include "itkVectorImage.h"
 
-struct SSDGeneral
-{
-  typedef itk::VectorImage<float, 2> ImageType;
-
-  float operator()(const ImageType* const image, const itk::ImageRegion<2>& region1,
-                   const itk::ImageRegion<2>& region2);
-};
-
-template <unsigned int TDimension>
+// Generic - we will not allow this (simply by not implementing any functions)
+template <typename TImage>
 struct SSD
 {
-  typedef itk::Image<itk::CovariantVector<float, TDimension>, 2> ImageType;
+};
 
-  float operator()(const itk::ImageRegion<2>& region1,
+// itk::Image<scalar, 2> images
+template <>
+template <typename TPixel>
+struct SSD<itk::Image<TPixel, 2> >
+{
+  typedef itk::Image<TPixel, 2> ImageType;
+  
+  static float Difference(const ImageType* const image, const itk::ImageRegion<2>& region1,
+                          const itk::ImageRegion<2>& region2);
+
+  float Difference(const itk::ImageRegion<2>& region1,
+                   const itk::ImageRegion<2>& region2);
+
+  ImageType* Image;
+};
+
+// itk::VectorImage<scalar, 2> images
+template <>
+template <typename TPixel>
+struct SSD<itk::VectorImage<TPixel, 2> >
+{
+  typedef itk::VectorImage<TPixel, 2> ImageType;
+
+  static float Difference(const ImageType* const image, const itk::ImageRegion<2>& region1,
+                   const itk::ImageRegion<2>& region2);
+    
+  float Difference(const itk::ImageRegion<2>& region1,
+                   const itk::ImageRegion<2>& region2);
+
+  ImageType* Image;
+};
+
+// itk::Image<itk::CovariantVector<scalar, N>, 2> images
+template <>
+template <unsigned int TDimension, typename TPixel>
+struct SSD<itk::Image<itk::CovariantVector<TPixel, TDimension>, 2> >
+{
+  typedef itk::Image<itk::CovariantVector<TPixel, TDimension>, 2> ImageType;
+
+  float Difference(const itk::ImageRegion<2>& region1,
                    const itk::ImageRegion<2>& region2);
   
-  float operator()(const ImageType* const image, const itk::ImageRegion<2>& region1,
+  static float Difference(const ImageType* const image, const itk::ImageRegion<2>& region1,
                    const itk::ImageRegion<2>& region2);
 
   ImageType* Image;

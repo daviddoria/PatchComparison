@@ -41,7 +41,6 @@ std::vector<float> SelfDeviationWeightedSSD::ComputeDeviations(const TImage* con
   itk::ImageRegionConstIteratorWithIndex<TImage> regionIterator(image, region);
 
   unsigned int pixelCounter = 0;
-  SumOfSquaredDifferencesGeneral diffOperator;
 
   while(!regionIterator.IsAtEnd())
     {
@@ -56,7 +55,7 @@ std::vector<float> SelfDeviationWeightedSSD::ComputeDeviations(const TImage* con
         }
 
       //sumDeviations += pow(region1Iterator.Get() - deviationIterator.Get(), 2);
-      float deviation = diffOperator(regionIterator.Get(), deviationIterator.Get());
+      float deviation = PixelDifferences::SumOfSquaredDifferences(regionIterator.Get(), deviationIterator.Get());
       //std::cout << "deviation: " << deviation << std::endl;
 
       sumDeviations += deviation;

@@ -15,16 +15,15 @@ int main( int argc, char ** argv )
   itk::VariableLengthVector<float> b(3);
   b.Fill(21.0f);
 
-  SumOfSquaredDifferencesGeneral diffOperator;
-  float diff = diffOperator(a,b);
+  float diff = PixelDifferences::SumOfSquaredDifferences(a,b);
   std::cout << "Diff = " << diff << std::endl;
   }
 
   {
   float a = 10.0f;
   float b = 21.0f;
-  SumOfSquaredDifferencesGeneral diffOperator;
-  float diff = diffOperator(a,b);
+  
+  float diff = PixelDifferences::SumOfSquaredDifferences(a,b);
   std::cout << "Diff = " << diff << std::endl;
   }
 

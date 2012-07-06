@@ -5,9 +5,20 @@
 
 #include <cmath>
 
+namespace PixelDifferences
+{
+
 template <typename TPixel>
-float SumOfSquaredDifferencesGeneral::operator()(const itk::VariableLengthVector<TPixel> &a,
-                                                 const itk::VariableLengthVector<TPixel> &b)
+float SumOfSquaredDifferences(const TPixel &a, const TPixel &b)
+{
+  // This assumes that TPixel is a scalar
+  float diff = a - b;
+  return diff * diff;
+}
+
+template <typename TPixel>
+float SumOfSquaredDifferences(const itk::VariableLengthVector<TPixel> &a,
+                              const itk::VariableLengthVector<TPixel> &b)
 {
   float difference = 0;
 
@@ -20,16 +31,10 @@ float SumOfSquaredDifferencesGeneral::operator()(const itk::VariableLengthVector
   return difference;
 }
 
-template <typename TPixel>
-float SumOfSquaredDifferencesGeneral::operator()(const TPixel &a, const TPixel &b)
-{
-  // This assumes that TPixel is a scalar
-  float diff = a - b;
-  return diff * diff;
-}
 
-template <unsigned int TDimension>
-float SumOfSquaredDifferences<TDimension>::operator()(const PixelType &a, const PixelType &b)
+template <typename TPixel, unsigned int TDimension>
+float SumOfSquaredDifferences(const itk::CovariantVector<TPixel, TDimension>& a,
+                              const itk::CovariantVector<TPixel, TDimension>& b)
 {
   float difference = 0;
 
@@ -44,17 +49,18 @@ float SumOfSquaredDifferences<TDimension>::operator()(const PixelType &a, const 
   return difference;
 }
 
-template <typename TPixel>
-float SumOfAbsoluteDifferences::operator()(const TPixel &a, const TPixel &b)
-{
-  float difference = 0;
+// template <typename TPixel>
+// float SumOfAbsoluteDifferences::operator()(const TPixel &a, const TPixel &b)
+// {
+//   float difference = 0;
+// 
+//   for(unsigned int i = 0; i < a.GetSize(); ++i)
+//     {
+//     difference += fabs(a[i] - b[i]);
+//     }
+//   return difference;
+// }
 
-  for(unsigned int i = 0; i < a.GetSize(); ++i)
-    {
-    difference += fabs(a[i] - b[i]);
-    }
-  return difference;
 }
-
 
 #endif

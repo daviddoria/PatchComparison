@@ -7,8 +7,9 @@
 
 #include "itkImageRegionConstIterator.h"
 
-template <unsigned int TDimension>
-float SSD<TDimension>::operator()(const ImageType* const image, const itk::ImageRegion<2>& region1, const itk::ImageRegion<2>& region2)
+template <unsigned int TDimension, typename TPixel>
+float SSD<itk::Image<itk::CovariantVector<TPixel, TDimension>, 2> >::Difference
+(const ImageType* const image, const itk::ImageRegion<2>& region1, const itk::ImageRegion<2>& region2)
 {
   assert(region1.GetSize() == region2.GetSize());
   assert(image->GetLargestPossibleRegion().IsInside(region1));
@@ -29,8 +30,7 @@ float SSD<TDimension>::operator()(const ImageType* const image, const itk::Image
     pixel1 = *patch1Iterator;
     pixel2 = *patch2Iterator;
 
-    SumOfSquaredDifferences<TDimension> sumOfSquaredDifferencesFunctor;
-    float squaredDifference = sumOfSquaredDifferencesFunctor(pixel1, pixel2);
+    float squaredDifference = PixelDifferences::SumOfSquaredDifferences(pixel1, pixel2);
 
 //       std::cout << "Source pixel: " << static_cast<unsigned int>(sourcePixel)
 //                 << " target pixel: " << static_cast<unsigned int>(targetPixel)
@@ -49,8 +49,9 @@ float SSD<TDimension>::operator()(const ImageType* const image, const itk::Image
 
   return averageSSD;
 }
-template <unsigned int TDimension>
-float SSD<TDimension>::operator()(const itk::ImageRegion<2>& region1,
+
+template <unsigned int TDimension, typename TPixel>
+float SSD<itk::Image<itk::CovariantVector<TPixel, TDimension>, 2> >::Difference(const itk::ImageRegion<2>& region1,
                                   const itk::ImageRegion<2>& region2)
 {
   return operator()(this->Image, region1, region2);
