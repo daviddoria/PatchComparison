@@ -1,17 +1,86 @@
 #include "PatchComparison.h"
 
 #include "SelfDeviationWeightedSSD.h"
+#include "LocalPCADistance.h"
+#include "ProjectedDistance.h"
+#include <PatchProjection/PatchProjection.h>
 
 // STL
 #include <iostream>
 
 void TestSelfDeviationWeightedSSD();
+void TestLocalPCADistance();
+void TestProjectedDistance();
 
 int main( int argc, char ** argv )
 {
-  TestSelfDeviationWeightedSSD();
-
+  //TestSelfDeviationWeightedSSD();
+  TestLocalPCADistance();
+  TestProjectedDistance();
   return 0;
+}
+
+void TestProjectedDistance()
+{
+  typedef itk::Image<unsigned char, 2> ImageType;
+  ImageType::Pointer image = ImageType::New();
+  itk::Index<2> corner = {{0,0}};
+  const unsigned int imageSize = 10;
+  itk::Size<2> size = {{imageSize,imageSize}};
+  itk::ImageRegion<2> region(corner, size);
+  image->SetRegions(region);
+  image->Allocate();
+
+  const unsigned int patchRadius = 1;
+  typedef Eigen::VectorXf VectorType;
+  typedef Eigen::MatrixXf MatrixType;
+  VectorType meanVector;
+  std::vector<typename VectorType::Scalar> sortedEigenvalues;
+  MatrixType projectionMatrix = PatchProjection<MatrixType, VectorType>::
+      ComputeProjectionMatrixFromImageOuterProduct(image.GetPointer(), patchRadius,
+                                                   meanVector, sortedEigenvalues);
+  
+  itk::Size<2> patchSize = {{patchRadius*2 + 1, patchRadius*2 + 1}};
+
+  itk::Index<2> queryCorner = {{2,2}};
+  itk::ImageRegion<2> queryRegion(queryCorner, patchSize);
+
+  itk::Index<2> testCorner = {{2,2}};
+  itk::ImageRegion<2> testRegion(testCorner, patchSize);
+
+  ProjectedDistance<ImageType> projectedDistanceFunctor;
+  projectedDistanceFunctor.ProjectionMatrix = projectionMatrix;
+  projectedDistanceFunctor.Image = image;
+  float distance = projectedDistanceFunctor.Distance(queryRegion, testRegion);
+  std::cout << "distance = " << distance << std::endl;
+  
+  float distanceStatic = ProjectedDistance<ImageType>::Distance(image.GetPointer(), projectionMatrix, queryRegion, testRegion);
+  std::cout << "distanceStatic = " << distanceStatic << std::endl;
+}
+
+void TestLocalPCADistance()
+{
+  typedef itk::Image<unsigned char, 2> ImageType;
+  ImageType::Pointer image = ImageType::New();
+  itk::Index<2> corner = {{0,0}};
+  const unsigned int imageSize = 10;
+  itk::Size<2> size = {{imageSize,imageSize}};
+  itk::ImageRegion<2> region(corner, size);
+  image->SetRegions(region);
+  image->Allocate();
+
+  const unsigned int patchRadius = 1;
+  itk::Size<2> patchSize = {{patchRadius*2 + 1, patchRadius*2 + 1}};
+  
+  itk::Index<2> queryCorner = {{2,2}};
+  itk::ImageRegion<2> queryRegion(queryCorner, patchSize);
+
+  itk::Index<2> testCorner = {{2,2}};
+  itk::ImageRegion<2> testRegion(testCorner, patchSize);
+
+  float distance = LocalPCADistance<ImageType>::Distance(image.GetPointer(), queryRegion, testRegion);
+
+  std::cout << "distance = " << distance << std::endl;
 }
 
 void TestSelfDeviationWeightedSSD()
