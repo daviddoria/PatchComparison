@@ -17,6 +17,8 @@ float ProjectedDistance<TImage>::Distance(const TImage* const image, const Matri
   VectorType vectorizedTarget = PatchProjection<MatrixType, VectorType>::VectorizePatch(image,
                                                               region2);
 
+  assert(projectionMatrix.cols() == vectorizedSource.size());
+
   VectorType projectedSource = projectionMatrix.transpose() * vectorizedSource;
 
   VectorType projectedTarget = projectionMatrix.transpose() * vectorizedTarget;
@@ -43,7 +45,7 @@ void ProjectedDistance<TImage>::SetImage(TImage* const image)
 template <typename TImage>
 void ProjectedDistance<TImage>::SetProjectionMatrix(const MatrixType& projectionMatrix)
 {
-  this->ProjectionMatrix = ProjectionMatrix;
+  this->ProjectionMatrix = projectionMatrix;
 }
 
 #endif
