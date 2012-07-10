@@ -34,4 +34,16 @@ float ProjectedDistance<TImage>::Distance(const itk::ImageRegion<2>& region1,
   return Distance(this->Image, this->ProjectionMatrix, region1, region2);
 }
 
+template <typename TImage>
+void ProjectedDistance<TImage>::SetImage(TImage* const image)
+{
+  this->Image = image;
+}
+
+template <typename TImage>
+void ProjectedDistance<TImage>::SetProjectionMatrix(const MatrixType& projectionMatrix)
+{
+  this->ProjectionMatrix = ProjectionMatrix;
+}
+
 #endif

@@ -8,8 +8,10 @@
 #include "itkImage.h"
 #include "itkVectorImage.h"
 
+#include "PatchDistance.h"
+
 template <typename TImage>
-struct ProjectedDistance
+struct ProjectedDistance : public PatchDistance
 {
   typedef Eigen::MatrixXf MatrixType;
   typedef Eigen::VectorXf VectorType;
@@ -20,6 +22,11 @@ struct ProjectedDistance
   static float Distance(const TImage* const image, const MatrixType& projectionMatrix, const itk::ImageRegion<2>& region1,
                         const itk::ImageRegion<2>& region2);
 
+  void SetImage(TImage* const image);
+
+  void SetProjectionMatrix(const MatrixType& projectionMatrix);
+  
+private:
   TImage* Image;
 
   MatrixType ProjectionMatrix;

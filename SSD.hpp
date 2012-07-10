@@ -8,7 +8,7 @@
 #include "itkImageRegionConstIterator.h"
 
 template <typename TImage>
-float SSD<TImage>::Difference
+float SSD<TImage>::Distance
 (const TImage* const image, const itk::ImageRegion<2>& region1, const itk::ImageRegion<2>& region2)
 {
   assert(region1.GetSize() == region2.GetSize());
@@ -49,10 +49,10 @@ float SSD<TImage>::Difference
 }
 
 template <typename TImage>
-float SSD<TImage>::Difference(const itk::ImageRegion<2>& region1,
-                              const itk::ImageRegion<2>& region2)
+float SSD<TImage>::Distance(const itk::ImageRegion<2>& region1,
+                            const itk::ImageRegion<2>& region2)
 {
-  return operator()(this->Image, region1, region2);
+  return Distance(this->Image, region1, region2);
 }
 
 #endif

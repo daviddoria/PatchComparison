@@ -4,8 +4,10 @@
 // Eigen
 #include <Eigen/Dense>
 
+#include "PatchDistance.h"
+
 template <typename TImage>
-struct LocalPCADistance
+struct LocalPCADistance : public PatchDistance
 {
   typedef Eigen::MatrixXf MatrixType;
   typedef Eigen::VectorXf VectorType;

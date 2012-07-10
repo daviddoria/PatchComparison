@@ -49,8 +49,8 @@ void TestProjectedDistance()
   itk::ImageRegion<2> testRegion(testCorner, patchSize);
 
   ProjectedDistance<ImageType> projectedDistanceFunctor;
-  projectedDistanceFunctor.ProjectionMatrix = projectionMatrix;
-  projectedDistanceFunctor.Image = image;
+  projectedDistanceFunctor.SetProjectionMatrix(projectionMatrix);
+  projectedDistanceFunctor.SetImage(image);
   float distance = projectedDistanceFunctor.Distance(queryRegion, testRegion);
   std::cout << "distance = " << distance << std::endl;
   
