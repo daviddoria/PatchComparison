@@ -8,14 +8,17 @@
 
 template <typename TImage>
 float ProjectedDistance<TImage>::Distance(const TImage* const image, const MatrixType& projectionMatrix,
+                                          const VectorType& meanVector,
                                           const itk::ImageRegion<2>& region1,
                                           const itk::ImageRegion<2>& region2)
 {
   VectorType vectorizedSource = PatchProjection<MatrixType, VectorType>::VectorizePatch(image,
                                                               region1);
+  vectorizedSource -= meanVector;
 
   VectorType vectorizedTarget = PatchProjection<MatrixType, VectorType>::VectorizePatch(image,
                                                               region2);
+  vectorizedTarget -= meanVector;
 
   assert(projectionMatrix.cols() == vectorizedSource.size());
 
@@ -33,7 +36,7 @@ template <typename TImage>
 float ProjectedDistance<TImage>::Distance(const itk::ImageRegion<2>& region1,
                                           const itk::ImageRegion<2>& region2)
 {
-  return Distance(this->Image, this->ProjectionMatrix, region1, region2);
+  return Distance(this->Image, this->ProjectionMatrix, this->MeanVector, region1, region2);
 }
 
 template <typename TImage>
@@ -46,6 +49,12 @@ template <typename TImage>
 void ProjectedDistance<TImage>::SetProjectionMatrix(const MatrixType& projectionMatrix)
 {
   this->ProjectionMatrix = projectionMatrix;
+}
+
+template <typename TImage>
+void ProjectedDistance<TImage>::SetMeanVector(const VectorType& meanVector)
+{
+  this->MeanVector = meanVector;
 }
 
 #endif

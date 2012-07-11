@@ -19,17 +19,30 @@ struct ProjectedDistance : public PatchDistance
   float Distance(const itk::ImageRegion<2>& region1,
                  const itk::ImageRegion<2>& region2);
 
-  static float Distance(const TImage* const image, const MatrixType& projectionMatrix, const itk::ImageRegion<2>& region1,
+  static float Distance(const TImage* const image, const MatrixType& projectionMatrix,
+                        const VectorType& meanVector,
+                        const itk::ImageRegion<2>& region1,
                         const itk::ImageRegion<2>& region2);
 
+  /** Set the image that the patches refer to. */
   void SetImage(TImage* const image);
 
+  /** Set the mean vector. */
+  void SetMeanVector(const VectorType& meanVector);
+
+  /** Set the projection matrix. */
   void SetProjectionMatrix(const MatrixType& projectionMatrix);
-  
+
 private:
+
+  /** The image that the patches refer to. */
   TImage* Image;
 
+  /** The matrix to use to project the patches. */
   MatrixType ProjectionMatrix;
+
+  /** The mean vector computed from the original feature matrix. */
+  VectorType MeanVector;
 };
 
 #include "ProjectedDistance.hpp"

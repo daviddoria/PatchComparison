@@ -20,6 +20,7 @@ struct LocalPCADistance : public PatchDistance
 
   /** Compute the distance between the regions. */
   static float Distance(const TImage* const image, const MatrixType& projectionMatrix,
+                        const VectorType& meanVector,
                         const itk::ImageRegion<2>& region1,
                         const itk::ImageRegion<2>& region2);
 
@@ -42,6 +43,8 @@ private:
   /** The projection matrix. */
   MatrixType ProjectionMatrix;
 
+  /** The mean vector computed when computing the projection matrix. */
+  VectorType MeanVector;
 };
 
 #include "LocalPCADistance.hpp"
