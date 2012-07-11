@@ -23,7 +23,7 @@ float PatchComparison::ComputeAverageSSD(const itk::ImageRegion<2>& region1, con
 float PatchComparison::ComputeAverageValueDifference(const itk::ImageRegion<2>& region1, const itk::ImageRegion<2>& region2)
 {
   AverageValueDifference averageValueDifference;
-  return averageValueDifference(this->Image.GetPointer(), region1, region2);
+  return averageValueDifference.Difference(this->Image.GetPointer(), region1, region2);
 }
 
 float PatchComparison::ComputeVarianceDifference(const itk::ImageRegion<2>& region1, const itk::ImageRegion<2>& region2)

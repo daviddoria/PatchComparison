@@ -9,7 +9,7 @@
 struct AverageValueDifference
 {
   template <typename TImage>
-  float operator()(const TImage* const image,
+  float Difference(const TImage* const image,
                    const itk::ImageRegion<2>& region1, const itk::ImageRegion<2>& region2);
 };
 

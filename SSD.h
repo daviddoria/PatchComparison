@@ -15,12 +15,19 @@
 template <typename TImage>
 struct SSD : public PatchDistance
 {
+  /** The distance function that does not use the internal data.. */
   static float Distance(const TImage* const image, const itk::ImageRegion<2>& region1,
                         const itk::ImageRegion<2>& region2);
 
+  /** The distance function that uses the internal data. */
   float Distance(const itk::ImageRegion<2>& region1,
                  const itk::ImageRegion<2>& region2);
 
+  /** Set the image to use. */
+  void SetImage(TImage* const image);
+  
+private:
+  /** The image to use. */
   TImage* Image;
 };
 

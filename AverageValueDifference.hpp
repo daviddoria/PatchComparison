@@ -12,7 +12,7 @@
  */
 
 template <typename TImage>
-float AverageValueDifference::operator()(const TImage* const image,
+float AverageValueDifference::Difference(const TImage* const image,
                                          const itk::ImageRegion<2>& region1,
                                          const itk::ImageRegion<2>& region2)
 {
