@@ -100,6 +100,16 @@ void SelfPatchCompareLocalOptimization<TImage>::ComputePatchScores()
       scores[directPatchMatchId] += minScore;
     }
   }
+
+  // Assign them the new score values to the internal PatchData
+  for(size_t i = 0; i < this->PatchData.size(); ++i)
+  {
+    this->PatchData[i].second = scores[i];
+  }
+
+  // Sort the patch data by the new scores
+  std::sort(this->PatchData.begin(), this->PatchData.end(),
+                      Helpers::SortBySecondAccending<typename SelfPatchCompare<TImage>::PatchDataType>);
 }
 
 #endif
