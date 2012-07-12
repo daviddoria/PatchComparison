@@ -54,6 +54,7 @@ float SSD<TImage>::Distance(const itk::ImageRegion<2>& region1,
 {
   return Distance(this->Image, region1, region2);
 }
+
 template <typename TImage>
 void SSD<TImage>::SetImage(TImage* const image)
 {

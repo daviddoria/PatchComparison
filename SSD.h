@@ -25,7 +25,7 @@ struct SSD : public PatchDistance
 
   /** Set the image to use. */
   void SetImage(TImage* const image);
-  
+
 private:
   /** The image to use. */
   TImage* Image;
