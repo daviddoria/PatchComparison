@@ -53,19 +53,51 @@ void SelfPatchCompareLocalOptimization<TImage>::ComputePatchScores()
                                                                   this->TargetRegion.GetSize()[0]/2);
   }
 
+  // For each neighbor, compute a list of candidate filling patches
+  std::vector<std::vector<typename SelfPatchCompare<TImage>::PatchDataType> >
+        neigbhorBestPatches(neighborRegions.size());
+  for(unsigned int neighborId = 0; neighborId < neighborRegions.size(); ++neighborId)
+  {
+    SelfPatchCompare<TImage> selfPatchCompare;
+    selfPatchCompare.SetImage(this->Image);
+    selfPatchCompare.CreateFullyValidMask();
+    selfPatchCompare.SetTargetRegion(neighborRegions[neighborId]);
+    selfPatchCompare.ComputePatchScores();
+    std::vector<typename SelfPatchCompare<TImage>::PatchDataType> patchData =
+              selfPatchCompare.GetPatchData();
+
+    std::partial_sort(patchData.begin(), patchData.begin() + numberOfPatches,
+                      patchData.end(),
+                      Helpers::SortBySecondAccending<typename SelfPatchCompare<TImage>::PatchDataType>);
+    neigbhorBestPatches[neighborId] = patchData;
+  }
+
   // For each top patch of the direct query pixel, sum the minimum distance to all
   // matches to the neighbor patch
+
+  // "the minimum differences of a candidate patch for the
+  // target region with respect to all the candidate patches in
+  // the neighborhood."
+  std::vector<float> scores(numberOfPatches);
+  assert(this->PatchData.size() == numberOfPatches);
+
   for(unsigned int directPatchMatchId = 0; directPatchMatchId < this->PatchData.size(); ++directPatchMatchId)
   {
     for(unsigned int neighborId = 0; neighborId < neighborRegions.size(); ++neighborId)
     {
-      SelfPatchCompare<TImage> selfPatchCompare;
-      selfPatchCompare.SetImage(this->Image);
-      selfPatchCompare.CreateFullyValidMask();
-      selfPatchCompare.SetTargetRegion(neighborRegions[neighborId]);
-      selfPatchCompare.ComputePatchScores();
-      std::vector<typename SelfPatchCompare<TImage>::PatchDataType> patchData =
-               selfPatchCompare.GetPatchData();
+      float minScore = std::numeric_limits<float>::max();
+
+      for(unsigned int neighborTopPatchId = 0; neighborTopPatchId < numberOfPatches; ++neighborTopPatchId)
+      {
+        float score = this->PatchDistanceFunctor->Distance(
+                      neigbhorBestPatches[neighborId][neighborTopPatchId].first,
+                      this->PatchData[directPatchMatchId].first);
+        if(score < minScore)
+        {
+          minScore = score;
+        }
+      }
+      scores[directPatchMatchId] += minScore;
     }
   }
 }
