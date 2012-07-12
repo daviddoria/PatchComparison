@@ -16,11 +16,14 @@
  *
  *=========================================================================*/
 
+#ifndef SelfPatchCompare_HPP
+#define SelfPatchCompare_HPP
+
 #include "SelfPatchCompare.h"
 
 // Submodules
-#include "ITKVTKHelpers/ITKHelpers/Helpers/Helpers.h"
-#include "ITKVTKHelpers/ITKHelpers/ITKHelpers.h"
+#include "Mask/ITKHelpers/Helpers/Helpers.h"
+#include "Mask/ITKHelpers/ITKHelpers.h"
 #include "Mask/MaskOperations.h"
 
 // Custom
@@ -29,17 +32,20 @@
 // STL
 #include <algorithm> // for sort()
 
-SelfPatchCompare::SelfPatchCompare() : Image(NULL), MaskImage(NULL), PatchDistanceFunctor(NULL)
+template <typename TImage>
+SelfPatchCompare<TImage>::SelfPatchCompare() : Image(NULL), MaskImage(NULL), PatchDistanceFunctor(NULL)
 {
   this->FullyValidMask = Mask::New();
 }
 
-void SelfPatchCompare::SetImage(itk::VectorImage<float, 2>* const image)
+template <typename TImage>
+void SelfPatchCompare<TImage>::SetImage(itk::VectorImage<float, 2>* const image)
 {
   this->Image = image;
 }
 
-void SelfPatchCompare::CreateFullyValidMask()
+template <typename TImage>
+void SelfPatchCompare<TImage>::CreateFullyValidMask()
 {
   this->FullyValidMask->SetRegions(this->Image->GetLargestPossibleRegion());
   this->FullyValidMask->Allocate();
@@ -48,7 +54,8 @@ void SelfPatchCompare::CreateFullyValidMask()
   this->MaskImage = this->FullyValidMask;
 }
 
-void SelfPatchCompare::SetMask(Mask* const mask)
+template <typename TImage>
+void SelfPatchCompare<TImage>::SetMask(Mask* const mask)
 {
   // Ensure the image is set first, so the mask size can be checked against the image.
   if(!this->Image)
@@ -67,13 +74,15 @@ void SelfPatchCompare::SetMask(Mask* const mask)
   this->MaskImage = mask;
 }
 
-void SelfPatchCompare::SetTargetRegion(const itk::ImageRegion<2>& region)
+template <typename TImage>
+void SelfPatchCompare<TImage>::SetTargetRegion(const itk::ImageRegion<2>& region)
 {
   this->TargetRegion = region;
   this->PatchDistanceFunctor->SetTargetPatch(region);
 }
 
-void SelfPatchCompare::ComputePatchScores()
+template <typename TImage>
+void SelfPatchCompare<TImage>::ComputePatchScores()
 {
   assert(this->PatchDistanceFunctor);
 
@@ -81,12 +90,14 @@ void SelfPatchCompare::ComputePatchScores()
 
   //std::vector<itk::ImageRegion<2> > fullSourcePatches = FindFullSourcePatches();
   unsigned int patchRadius = this->TargetRegion.GetSize()[0]/2;
-  std::vector<itk::ImageRegion<2> > fullSourcePatches = MaskOperations::GetAllFullyValidRegions(this->MaskImage, patchRadius);
+  std::vector<itk::ImageRegion<2> > fullSourcePatches =
+       MaskOperations::GetAllFullyValidRegions(this->MaskImage, patchRadius);
 
   for(unsigned int i = 0; i < fullSourcePatches.size(); ++i)
     {
     //std::cout << "Comparing " << this->TargetRegion << " to " << fullSourcePatches[i] << std::endl;
-    float averageAbsoluteScore = this->PatchDistanceFunctor->Distance(this->TargetRegion, fullSourcePatches[i]);
+    float averageAbsoluteScore = this->PatchDistanceFunctor->Distance(this->TargetRegion,
+                                                                      fullSourcePatches[i]);
 
     //std::cout << "score: " << averageAbsoluteScore << std::endl;
     PatchDataType patchData;
@@ -96,12 +107,17 @@ void SelfPatchCompare::ComputePatchScores()
     }
 }
 
-std::vector<SelfPatchCompare::PatchDataType> SelfPatchCompare::GetPatchData()
+template <typename TImage>
+std::vector<typename SelfPatchCompare<TImage>::PatchDataType>
+SelfPatchCompare<TImage>::GetPatchData()
 {
   return this->PatchData;
 }
 
-void SelfPatchCompare::SetPatchDistanceFunctor(PatchDistance* const patchDistanceFunctor)
+template <typename TImage>
+void SelfPatchCompare<TImage>::SetPatchDistanceFunctor(PatchDistance* const patchDistanceFunctor)
 {
   this->PatchDistanceFunctor = patchDistanceFunctor;
 }
+
+#endif

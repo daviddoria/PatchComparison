@@ -1,3 +1,21 @@
+/*=========================================================================
+ *
+ *  Copyright David Doria 2012 daviddoria@gmail.com
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
+
 #ifndef SelfPatchCompareLocalOptimization_HPP
 #define SelfPatchCompareLocalOptimization_HPP
 
@@ -15,34 +33,39 @@ template <typename TImage>
 void SelfPatchCompareLocalOptimization<TImage>::ComputePatchScores()
 {
   // Compute the best patches for the direct query patch
-  SelfPatchCompare::ComputePatchScores();
+  SelfPatchCompare<TImage>::ComputePatchScores();
 
   unsigned int numberOfPatches = 10;
   std::partial_sort(this->PatchData.begin(), this->PatchData.begin() + numberOfPatches,
-                    this->PatchData.end(), Helpers::SortBySecondAccending<SelfPatchCompare::PatchDataType>);
+                    this->PatchData.end(),
+                    Helpers::SortBySecondAccending<typename SelfPatchCompare<TImage>::PatchDataType>);
 
   this->PatchData.resize(numberOfPatches);
 
   // Compute the neighbors of the query patch
   itk::Index<2> queryPixel = ITKHelpers::GetRegionCenter(this->TargetRegion);
-  std::vector<itk::Index<2> > neighborPixels = ITKHelpers::Get8NeighborsInRegion(this->TargetRegion, this->Image->GetLargestPossibleRegion());
+  std::vector<itk::Index<2> > neighborPixels =
+        ITKHelpers::Get8NeighborsInRegion(this->Image->GetLargestPossibleRegion(), queryPixel);
   std::vector<itk::ImageRegion<2> > neighborRegions(neighborPixels.size());
   for(unsigned int i = 0; i < neighborPixels.size(); ++i)
   {
-    neighborRegions[i] = ITKHelpers::GetRegionInRadiusAroundPixel(neighborPixels[i], this->TargetRegion.GetSize()[0]/2);
+    neighborRegions[i] = ITKHelpers::GetRegionInRadiusAroundPixel(neighborPixels[i],
+                                                                  this->TargetRegion.GetSize()[0]/2);
   }
 
-  // For each top patch of the direct query pixel, sum the minimum distance to all matches to the neighbor patch
+  // For each top patch of the direct query pixel, sum the minimum distance to all
+  // matches to the neighbor patch
   for(unsigned int directPatchMatchId = 0; directPatchMatchId < this->PatchData.size(); ++directPatchMatchId)
   {
     for(unsigned int neighborId = 0; neighborId < neighborRegions.size(); ++neighborId)
     {
-      SelfPatchCompare selfPatchCompare;
+      SelfPatchCompare<TImage> selfPatchCompare;
       selfPatchCompare.SetImage(this->Image);
       selfPatchCompare.CreateFullyValidMask();
       selfPatchCompare.SetTargetRegion(neighborRegions[neighborId]);
       selfPatchCompare.ComputePatchScores();
-      PatchDataType patchData = selfPatchCompare.GetPatchData();
+      std::vector<typename SelfPatchCompare<TImage>::PatchDataType> patchData =
+               selfPatchCompare.GetPatchData();
     }
   }
 }

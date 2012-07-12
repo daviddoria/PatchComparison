@@ -27,7 +27,7 @@
 #include <Eigen/Dense>
 
 // Submodules
-#include "PatchComparison/PatchDistance.h"
+#include "PatchDistance.h"
 
 // ITK
 #include "itkImageRegion.h"
@@ -41,6 +41,7 @@
  * that is partially masked. It computes the linear offsets of the masked pixels
  * once, and then uses them to do all of the patch comparisons.
  */
+template <typename TImage>
 class SelfPatchCompare
 {
 public:
@@ -95,5 +96,7 @@ protected:
   /** The functor to use to compare two patches. */
   PatchDistance* PatchDistanceFunctor;
 };
+
+#include "SelfPatchCompare.hpp"
 
 #endif
