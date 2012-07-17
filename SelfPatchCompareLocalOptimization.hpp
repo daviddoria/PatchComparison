@@ -34,7 +34,8 @@ void SelfPatchCompareLocalOptimization<TImage>::ComputePatchScores()
 {
   // Compute the best patches for the direct query patch
   SelfPatchCompare<TImage>::ComputePatchScores();
-
+  std::cout << "Found top source patches for direct query patch." << std::endl;
+  
   unsigned int numberOfPatches = 10;
   std::partial_sort(this->PatchData.begin(), this->PatchData.begin() + numberOfPatches,
                     this->PatchData.end(),
@@ -55,11 +56,12 @@ void SelfPatchCompareLocalOptimization<TImage>::ComputePatchScores()
 
   // For each neighbor, compute a list of candidate filling patches
   std::vector<std::vector<typename SelfPatchCompare<TImage>::PatchDataType> >
-        neigbhorBestPatches(neighborRegions.size());
+        neigbhorBestPatchData(neighborRegions.size());
   for(unsigned int neighborId = 0; neighborId < neighborRegions.size(); ++neighborId)
   {
     SelfPatchCompare<TImage> selfPatchCompare;
     selfPatchCompare.SetImage(this->Image);
+    selfPatchCompare.SetPatchDistanceFunctor(this->PatchDistanceFunctor);
     selfPatchCompare.CreateFullyValidMask();
     selfPatchCompare.SetTargetRegion(neighborRegions[neighborId]);
     selfPatchCompare.ComputePatchScores();
@@ -69,8 +71,10 @@ void SelfPatchCompareLocalOptimization<TImage>::ComputePatchScores()
     std::partial_sort(patchData.begin(), patchData.begin() + numberOfPatches,
                       patchData.end(),
                       Helpers::SortBySecondAccending<typename SelfPatchCompare<TImage>::PatchDataType>);
-    neigbhorBestPatches[neighborId] = patchData;
+    neigbhorBestPatchData[neighborId] = patchData;
   }
+
+  std::cout << "Found top source patches for all neighbor patches." << std::endl;
 
   // For each top patch of the direct query pixel, sum the minimum distance to all
   // matches to the neighbor patch
@@ -78,7 +82,7 @@ void SelfPatchCompareLocalOptimization<TImage>::ComputePatchScores()
   // "the minimum differences of a candidate patch for the
   // target region with respect to all the candidate patches in
   // the neighborhood."
-  std::vector<float> scores(numberOfPatches);
+  std::vector<float> scores(numberOfPatches, 0.0f);
   assert(this->PatchData.size() == numberOfPatches);
 
   for(unsigned int directPatchMatchId = 0; directPatchMatchId < this->PatchData.size(); ++directPatchMatchId)
@@ -90,7 +94,7 @@ void SelfPatchCompareLocalOptimization<TImage>::ComputePatchScores()
       for(unsigned int neighborTopPatchId = 0; neighborTopPatchId < numberOfPatches; ++neighborTopPatchId)
       {
         float score = this->PatchDistanceFunctor->Distance(
-                      neigbhorBestPatches[neighborId][neighborTopPatchId].first,
+                      neigbhorBestPatchData[neighborId][neighborTopPatchId].first,
                       this->PatchData[directPatchMatchId].first);
         if(score < minScore)
         {
@@ -101,15 +105,19 @@ void SelfPatchCompareLocalOptimization<TImage>::ComputePatchScores()
     }
   }
 
+  std::cout << "Computed summed errors." << std::endl;
+
   // Assign them the new score values to the internal PatchData
   for(size_t i = 0; i < this->PatchData.size(); ++i)
   {
-    this->PatchData[i].second = scores[i];
+    this->PatchData[i].second += scores[i];
   }
 
   // Sort the patch data by the new scores
   std::sort(this->PatchData.begin(), this->PatchData.end(),
                       Helpers::SortBySecondAccending<typename SelfPatchCompare<TImage>::PatchDataType>);
+
+  std::cout << "Finished sorting top patches by local optimization criteria." << std::endl;
 }
 
 #endif

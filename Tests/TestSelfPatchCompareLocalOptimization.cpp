@@ -17,9 +17,10 @@
  *=========================================================================*/
 
 #include "Mask/Mask.h"
-#include "SelfPatchCompare.h"
+#include "SelfPatchCompareLocalOptimization.h"
 #include "Types.h"
 
+// ITK
 #include "itkBinaryThresholdImageFilter.h"
 #include "itkImageRegionConstIterator.h"
 #include "itkImageFileWriter.h"
@@ -27,10 +28,10 @@
 #include "itkTimeProbe.h"
 #include "itkVectorImage.h"
 
+// STL
 #include <cstdlib>
 #include <ctime>
 
-itk::ImageRegion<2> GetRegionInRadiusAroundPixel(const itk::Index<2> pixel, const unsigned int radius);
 float RandomFloat();
 
 int main(int argc, char *argv[])
@@ -57,6 +58,7 @@ int main(int argc, char *argv[])
   FloatVectorImageType::Pointer image = imageSource->GetOutput();
 */
   // Generate a random image
+  typedef itk::VectorImage<float, 2> FloatVectorImageType;
   FloatVectorImageType::Pointer image = FloatVectorImageType::New();
   image->SetRegions(region);
   image->SetNumberOfComponentsPerPixel(3);
@@ -119,7 +121,7 @@ int main(int argc, char *argv[])
   while(!imageIterator.IsAtEnd())
     {
     itk::Index<2> currentPixel = imageIterator.GetIndex();
-    itk::ImageRegion<2> region = GetRegionInRadiusAroundPixel(currentPixel, patchRadius);
+    itk::ImageRegion<2> region = ITKHelpers::GetRegionInRadiusAroundPixel(currentPixel, patchRadius);
     if(image->GetLargestPossibleRegion().IsInside(region))
       {
       sourcePatches.push_back(region);
@@ -134,67 +136,47 @@ int main(int argc, char *argv[])
   targetIndex.Fill(3);
   
   itk::ImageRegion<2> targetRegion(targetIndex, targetSize);
-  SelfPatchCompare patchCompare;
+  SelfPatchCompareLocalOptimization<FloatVectorImageType> patchCompare;
   patchCompare.SetImage(image);
   patchCompare.SetMask(mask);
-  patchCompare.SetSourceRegions(sourcePatches);
+  //patchCompare.SetSourceRegions(sourcePatches);
   patchCompare.SetTargetRegion(targetRegion);
-  patchCompare.ComputeOffsets();
+  //patchCompare.ComputeOffsets();
   
   //unsigned int bestMatchSourcePatchId = patchCompare.FindBestPatch();
   //std::cout << "bestMatchSourcePatchId: " << bestMatchSourcePatchId << std::endl;
 
-  unsigned int patchId = 1;
-  float slowPatchDifference = patchCompare.SlowDifference(sourcePatches[patchId]);
-  std::cout << "slowPatchDifference: " << slowPatchDifference << std::endl;
-  
-  float fastPatchDifference = patchCompare.PatchDifference(sourcePatches[patchId]);
-  std::cout << "fastPatchDifference: " << fastPatchDifference << std::endl;
-
-  unsigned int iterations = 1e6;
-
-  itk::TimeProbe slowTimer;
-  slowTimer.Start();
-  
-  for(unsigned int i = 0; i < iterations; ++i)
-    {
-    float slowPatchDifference = patchCompare.SlowDifference(sourcePatches[patchId]);
-    }
-
-  slowTimer.Stop();
-  std::cout << "Slow Total: " << slowTimer.GetTotal() << std::endl;
-
-  itk::TimeProbe fastTimer;
-  fastTimer.Start();
-
-  for(unsigned int i = 0; i < iterations; ++i)
-    {
-    float fastPatchDifference = patchCompare.PatchDifference(sourcePatches[patchId]);
-    }
-
-  fastTimer.Stop();
-  std::cout << "Fast Total: " << fastTimer.GetTotal() << std::endl;
+//   unsigned int patchId = 1;
+//   float slowPatchDifference = patchCompare.SlowDifference(sourcePatches[patchId]);
+//   std::cout << "slowPatchDifference: " << slowPatchDifference << std::endl;
+//   
+//   float fastPatchDifference = patchCompare.PatchDifference(sourcePatches[patchId]);
+//   std::cout << "fastPatchDifference: " << fastPatchDifference << std::endl;
+// 
+//   unsigned int iterations = 1e6;
+// 
+//   itk::TimeProbe slowTimer;
+//   slowTimer.Start();
+//   
+//   for(unsigned int i = 0; i < iterations; ++i)
+//     {
+//     float slowPatchDifference = patchCompare.SlowDifference(sourcePatches[patchId]);
+//     }
+// 
+//   slowTimer.Stop();
+//   std::cout << "Slow Total: " << slowTimer.GetTotal() << std::endl;
+// 
+//   itk::TimeProbe fastTimer;
+//   fastTimer.Start();
+// 
+//   for(unsigned int i = 0; i < iterations; ++i)
+//     {
+//     float fastPatchDifference = patchCompare.PatchDifference(sourcePatches[patchId]);
+//     }
+// 
+//   fastTimer.Stop();
+//   std::cout << "Fast Total: " << fastTimer.GetTotal() << std::endl;
   return EXIT_SUCCESS;
-}
-
-itk::ImageRegion<2> GetRegionInRadiusAroundPixel(const itk::Index<2> pixel, const unsigned int radius)
-{
-  // This function returns a Region with the specified 'radius' centered at 'pixel'. By the definition of the radius of a square patch, the output region is (radius*2 + 1)x(radius*2 + 1).
-  // Note: This region is not necessarily entirely inside the image!
-
-  // The "index" is the lower left corner, so we need to subtract the radius from the center to obtain it
-  itk::Index<2> lowerLeft;
-  lowerLeft[0] = pixel[0] - radius;
-  lowerLeft[1] = pixel[1] - radius;
-
-  itk::ImageRegion<2> region;
-  region.SetIndex(lowerLeft);
-  itk::Size<2> size;
-  size[0] = radius*2 + 1;
-  size[1] = radius*2 + 1;
-  region.SetSize(size);
-
-  return region;
 }
 
 float RandomFloat()

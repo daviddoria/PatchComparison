@@ -77,6 +77,7 @@ void SelfPatchCompare<TImage>::SetMask(Mask* const mask)
 template <typename TImage>
 void SelfPatchCompare<TImage>::SetTargetRegion(const itk::ImageRegion<2>& region)
 {
+  assert(this->PatchDistanceFunctor);
   this->TargetRegion = region;
   this->PatchDistanceFunctor->SetTargetPatch(region);
 }
@@ -88,7 +89,6 @@ void SelfPatchCompare<TImage>::ComputePatchScores()
 
   this->PatchData.clear();
 
-  //std::vector<itk::ImageRegion<2> > fullSourcePatches = FindFullSourcePatches();
   unsigned int patchRadius = this->TargetRegion.GetSize()[0]/2;
   std::vector<itk::ImageRegion<2> > fullSourcePatches =
        MaskOperations::GetAllFullyValidRegions(this->MaskImage, patchRadius);

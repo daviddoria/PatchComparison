@@ -57,6 +57,7 @@ int main(int argc, char *argv[])
   FloatVectorImageType::Pointer image = imageSource->GetOutput();
 */
   // Generate a random image
+  typedef itk::VectorImage<float, 2> FloatVectorImageType;
   FloatVectorImageType::Pointer image = FloatVectorImageType::New();
   image->SetRegions(region);
   image->SetNumberOfComponentsPerPixel(3);
@@ -134,32 +135,32 @@ int main(int argc, char *argv[])
   targetIndex.Fill(3);
   
   itk::ImageRegion<2> targetRegion(targetIndex, targetSize);
-  SelfPatchCompare patchCompare;
+  SelfPatchCompare<FloatVectorImageType> patchCompare;
   patchCompare.SetImage(image);
   patchCompare.SetMask(mask);
-  patchCompare.SetSourceRegions(sourcePatches);
+  //patchCompare.SetSourceRegions(sourcePatches);
   patchCompare.SetTargetRegion(targetRegion);
-  patchCompare.ComputeOffsets();
+  //patchCompare.ComputeOffsets();
   
   //unsigned int bestMatchSourcePatchId = patchCompare.FindBestPatch();
   //std::cout << "bestMatchSourcePatchId: " << bestMatchSourcePatchId << std::endl;
 
   unsigned int patchId = 1;
-  float slowPatchDifference = patchCompare.SlowDifference(sourcePatches[patchId]);
-  std::cout << "slowPatchDifference: " << slowPatchDifference << std::endl;
-  
-  float fastPatchDifference = patchCompare.PatchDifference(sourcePatches[patchId]);
-  std::cout << "fastPatchDifference: " << fastPatchDifference << std::endl;
+//   float slowPatchDifference = patchCompare.SlowDifference(sourcePatches[patchId]);
+//   std::cout << "slowPatchDifference: " << slowPatchDifference << std::endl;
+//   
+//   float fastPatchDifference = patchCompare.PatchDifference(sourcePatches[patchId]);
+//   std::cout << "fastPatchDifference: " << fastPatchDifference << std::endl;
 
   unsigned int iterations = 1e6;
 
   itk::TimeProbe slowTimer;
   slowTimer.Start();
   
-  for(unsigned int i = 0; i < iterations; ++i)
-    {
-    float slowPatchDifference = patchCompare.SlowDifference(sourcePatches[patchId]);
-    }
+//   for(unsigned int i = 0; i < iterations; ++i)
+//     {
+//     float slowPatchDifference = patchCompare.SlowDifference(sourcePatches[patchId]);
+//     }
 
   slowTimer.Stop();
   std::cout << "Slow Total: " << slowTimer.GetTotal() << std::endl;
@@ -167,10 +168,10 @@ int main(int argc, char *argv[])
   itk::TimeProbe fastTimer;
   fastTimer.Start();
 
-  for(unsigned int i = 0; i < iterations; ++i)
-    {
-    float fastPatchDifference = patchCompare.PatchDifference(sourcePatches[patchId]);
-    }
+//   for(unsigned int i = 0; i < iterations; ++i)
+//     {
+//     float fastPatchDifference = patchCompare.PatchDifference(sourcePatches[patchId]);
+//     }
 
   fastTimer.Stop();
   std::cout << "Fast Total: " << fastTimer.GetTotal() << std::endl;

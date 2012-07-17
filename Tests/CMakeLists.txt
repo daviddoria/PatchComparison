@@ -10,7 +10,7 @@ add_executable(TestPixelDifferences TestPixelDifferences.cpp)
 target_link_libraries(TestPixelDifferences PatchComparison)
 
 add_executable(TestSelfPatchCompare TestSelfPatchCompare.cpp)
-target_link_libraries(TestSelfPatchCompare PatchComparison)
+target_link_libraries(TestSelfPatchCompare PatchComparison Mask)
 
 add_executable(TestSelfPatchCompareLocalOptimization TestSelfPatchCompareLocalOptimization.cpp)
-target_link_libraries(TestSelfPatchCompareLocalOptimization PatchComparison)
+target_link_libraries(TestSelfPatchCompareLocalOptimization PatchComparison Mask)

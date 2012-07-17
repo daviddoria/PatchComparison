@@ -54,7 +54,8 @@ void TestProjectedDistance()
   float distance = projectedDistanceFunctor.Distance(queryRegion, testRegion);
   std::cout << "distance = " << distance << std::endl;
   
-  float distanceStatic = ProjectedDistance<ImageType>::Distance(image.GetPointer(), projectionMatrix, queryRegion, testRegion);
+  float distanceStatic = ProjectedDistance<ImageType>::Distance(image.GetPointer(), projectionMatrix, meanVector,
+                                                                queryRegion, testRegion);
   std::cout << "distanceStatic = " << distanceStatic << std::endl;
 }
 
@@ -78,9 +79,9 @@ void TestLocalPCADistance()
   itk::Index<2> testCorner = {{2,2}};
   itk::ImageRegion<2> testRegion(testCorner, patchSize);
 
-  float distance = LocalPCADistance<ImageType>::Distance(image.GetPointer(), queryRegion, testRegion);
-
-  std::cout << "distance = " << distance << std::endl;
+//   float distance = LocalPCADistance<ImageType>::Distance(image.GetPointer(), queryRegion, testRegion);
+// 
+//   std::cout << "distance = " << distance << std::endl;
 }
 
 void TestSelfDeviationWeightedSSD()
