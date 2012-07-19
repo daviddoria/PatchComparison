@@ -18,7 +18,6 @@
 
 #include "Mask/Mask.h"
 #include "SelfPatchCompareLocalOptimization.h"
-#include "Types.h"
 
 // ITK
 #include "itkBinaryThresholdImageFilter.h"

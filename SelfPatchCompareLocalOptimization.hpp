@@ -21,7 +21,7 @@
 
 #include "SelfPatchCompareLocalOptimization.h"
 
-#include "PatchComparison/Mask/ITKHelpers/ITKHelpers.h"
+#include "ITKHelpers/ITKHelpers.h"
 
 template <typename TImage>
 SelfPatchCompareLocalOptimization<TImage>::SelfPatchCompareLocalOptimization()

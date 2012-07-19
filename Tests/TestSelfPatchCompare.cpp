@@ -18,7 +18,6 @@
 
 #include "Mask/Mask.h"
 #include "SelfPatchCompare.h"
-#include "Types.h"
 
 #include "itkBinaryThresholdImageFilter.h"
 #include "itkImageRegionConstIterator.h"
@@ -30,8 +29,9 @@
 #include <cstdlib>
 #include <ctime>
 
-itk::ImageRegion<2> GetRegionInRadiusAroundPixel(const itk::Index<2> pixel, const unsigned int radius);
-float RandomFloat();
+static itk::ImageRegion<2> GetRegionInRadiusAroundPixel(const itk::Index<2> pixel, const unsigned int radius);
+
+static float RandomFloat();
 
 int main(int argc, char *argv[])
 {
