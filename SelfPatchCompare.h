@@ -20,14 +20,13 @@
 #define SelfPatchCompare_H
 
 // Custom
-#include "Mask/Mask.h"
-#include "Types.h"
+#include "PatchDistance.h"
 
 // Eigen
 #include <Eigen/Dense>
 
 // Submodules
-#include "PatchDistance.h"
+#include "Mask/Mask.h"
 
 // ITK
 #include "itkImageRegion.h"
@@ -47,13 +46,11 @@ class SelfPatchCompare
 public:
   typedef Eigen::MatrixXf MatrixType;
 
-  typedef itk::VectorImage<float, 2> ImageType;
-
   /** Constructor. */
   SelfPatchCompare();
 
   /** Set the image to use to compare patch regions. */
-  void SetImage(itk::VectorImage<float, 2>* const image);
+  void SetImage(TImage* const image);
 
   /** Set the mask to use in the patch comparisons. */
   void SetMask(Mask* const mask);
@@ -82,7 +79,7 @@ protected:
   itk::ImageRegion<2> TargetRegion;
 
   /** This is the image from which to take the patches. */
-  ImageType* Image;
+  TImage* Image;
 
   /** This is the mask to check the validity of target pixels. */
   Mask* MaskImage;

@@ -26,9 +26,6 @@
 #include "Mask/ITKHelpers/ITKHelpers.h"
 #include "Mask/MaskOperations.h"
 
-// Custom
-#include "Types.h"
-
 // STL
 #include <algorithm> // for sort()
 
@@ -39,7 +36,7 @@ SelfPatchCompare<TImage>::SelfPatchCompare() : Image(NULL), MaskImage(NULL), Pat
 }
 
 template <typename TImage>
-void SelfPatchCompare<TImage>::SetImage(itk::VectorImage<float, 2>* const image)
+void SelfPatchCompare<TImage>::SetImage(TImage* const image)
 {
   this->Image = image;
 }
