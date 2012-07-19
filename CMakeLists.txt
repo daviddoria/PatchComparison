@@ -7,7 +7,7 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++0x")
 
 include_directories(/media/portable/src/Eigen)
 
-FIND_PACKAGE(ITK REQUIRED ITKCommon ITKIOImageBase
+FIND_PACKAGE(ITK REQUIRED ITKCommon ITKIOImageBase ITKTestKernel
              ITKImageIntensity ITKImageFeature ITKMathematicalMorphology ITKBinaryMathematicalMorphology ITKDistanceMap)
 INCLUDE(${ITK_USE_FILE})
 
