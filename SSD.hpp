@@ -18,17 +18,11 @@ float SSD<TImage>::Distance
   itk::ImageRegionConstIterator<TImage> patch1Iterator(image, region1);
   itk::ImageRegionConstIterator<TImage> patch2Iterator(image, region2);
 
-  float sumSquaredDifferences = 0;
-
-  typename TImage::PixelType pixel1;
-  typename TImage::PixelType pixel2;
+  float sumSquaredDifferences = 0.0f;
 
   while(!patch1Iterator.IsAtEnd())
     {
-    pixel1 = patch1Iterator.Get();
-    pixel2 = patch2Iterator.Get();
-
-    float squaredDifference = PixelDifferences::SumOfSquaredDifferences(pixel1, pixel2);
+    float squaredDifference = PixelDifferences::SumOfSquaredDifferences(patch1Iterator.Get(), patch2Iterator.Get());
 
 //       std::cout << "Source pixel: " << static_cast<unsigned int>(sourcePixel)
 //                 << " target pixel: " << static_cast<unsigned int>(targetPixel)

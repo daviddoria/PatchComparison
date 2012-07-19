@@ -44,7 +44,6 @@ template <typename TImage>
 class SelfPatchCompare
 {
 public:
-  typedef Eigen::MatrixXf MatrixType;
 
   /** Constructor. */
   SelfPatchCompare();

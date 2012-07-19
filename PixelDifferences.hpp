@@ -16,25 +16,25 @@ float SumOfSquaredDifferences(const TPixel &a, const TPixel &b)
   return diff * diff;
 }
 
-template <typename TPixel>
-float SumOfSquaredDifferences(const itk::VariableLengthVector<TPixel> &a,
-                              const itk::VariableLengthVector<TPixel> &b)
+template <typename TComponent>
+float SumOfSquaredDifferences(const itk::VariableLengthVector<TComponent> &a,
+                              const itk::VariableLengthVector<TComponent> &b)
 {
   float difference = 0;
 
   float diff = 0;
   for(unsigned int i = 0; i < a.GetSize(); ++i)
     {
-    diff = a[i] - b[i];
+    diff = a[i] - b[i]; // even if a[i] and b[i] are unsigned which would lead to a potential invalid calculation, since the result is stored as float it works properly
     difference += diff * diff;
     }
   return difference;
 }
 
 
-template <typename TPixel, unsigned int TDimension>
-float SumOfSquaredDifferences(const itk::CovariantVector<TPixel, TDimension>& a,
-                              const itk::CovariantVector<TPixel, TDimension>& b)
+template <typename TComponent, unsigned int TDimension>
+float SumOfSquaredDifferences(const itk::CovariantVector<TComponent, TDimension>& a,
+                              const itk::CovariantVector<TComponent, TDimension>& b)
 {
   float difference = 0;
 
@@ -42,7 +42,7 @@ float SumOfSquaredDifferences(const itk::CovariantVector<TPixel, TDimension>& a,
 
   for(unsigned int i = 0; i < TDimension; ++i)
   {
-    diff = a[i] - b[i];
+    diff = a[i] - b[i]; // even if a[i] and b[i] are unsigned which would lead to a potential invalid calculation, since the result is stored as float it works properly
     difference += diff * diff;
   }
 

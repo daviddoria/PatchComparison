@@ -15,12 +15,14 @@ namespace PixelDifferences
   float SumOfSquaredDifferences(const TPixel &a, const TPixel &b);
 
   /** For VariableLengthVector<T> pixel types */
-  template <typename TPixel>
-  float SumOfSquaredDifferences(const itk::VariableLengthVector<TPixel> &a, const itk::VariableLengthVector<TPixel> &b);
+  template <typename TComponent>
+  float SumOfSquaredDifferences(const itk::VariableLengthVector<TComponent> &a,
+                                const itk::VariableLengthVector<TComponent> &b);
 
   /** For CovariantVector<T, N> pixel types */
-  template <typename TPixel, unsigned int TDimension>
-  float SumOfSquaredDifferences(const itk::CovariantVector<TPixel, TDimension>& a, const itk::CovariantVector<TPixel, TDimension>& b);
+  template <typename TComponent, unsigned int TDimension>
+  float SumOfSquaredDifferences(const itk::CovariantVector<TComponent, TDimension>& a,
+                                const itk::CovariantVector<TComponent, TDimension>& b);
 };
 
 // struct SumOfAbsoluteDifferences
