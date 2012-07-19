@@ -35,7 +35,7 @@ void SelfPatchCompareLocalOptimization<TImage>::ComputePatchScores()
   // Compute the best patches for the direct query patch
   SelfPatchCompare<TImage>::ComputePatchScores();
   std::cout << "Found top source patches for direct query patch." << std::endl;
-  
+
   unsigned int numberOfPatches = 10;
   std::partial_sort(this->PatchData.begin(), this->PatchData.begin() + numberOfPatches,
                     this->PatchData.end(),

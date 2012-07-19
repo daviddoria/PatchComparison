@@ -53,7 +53,7 @@ void TestProjectedDistance()
   projectedDistanceFunctor.SetImage(image);
   float distance = projectedDistanceFunctor.Distance(queryRegion, testRegion);
   std::cout << "distance = " << distance << std::endl;
-  
+
   float distanceStatic = ProjectedDistance<ImageType>::Distance(image.GetPointer(), projectionMatrix, meanVector,
                                                                 queryRegion, testRegion);
   std::cout << "distanceStatic = " << distanceStatic << std::endl;
@@ -72,7 +72,7 @@ void TestLocalPCADistance()
 
   const unsigned int patchRadius = 1;
   itk::Size<2> patchSize = {{patchRadius*2 + 1, patchRadius*2 + 1}};
-  
+
   itk::Index<2> queryCorner = {{2,2}};
   itk::ImageRegion<2> queryRegion(queryCorner, patchSize);
 

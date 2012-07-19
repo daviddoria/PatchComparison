@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 {
   unsigned int t = time(NULL);
   srand(t);
-  
+
   itk::Size<2> size;
   size.Fill(10);
 
@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
     ++imageIterator;
     }
   }
-  
+
   // Write the image
   itk::ImageFileWriter<FloatVectorImageType>::Pointer imageWriter =
     itk::ImageFileWriter<FloatVectorImageType>::New();
@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
 
   itk::Index<2> targetIndex;
   targetIndex.Fill(3);
-  
+
   itk::ImageRegion<2> targetRegion(targetIndex, targetSize);
   SelfPatchCompareLocalOptimization<FloatVectorImageType> patchCompare;
   patchCompare.SetImage(image);
@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
   //patchCompare.SetSourceRegions(sourcePatches);
   patchCompare.SetTargetRegion(targetRegion);
   //patchCompare.ComputeOffsets();
-  
+
   //unsigned int bestMatchSourcePatchId = patchCompare.FindBestPatch();
   //std::cout << "bestMatchSourcePatchId: " << bestMatchSourcePatchId << std::endl;
 
@@ -153,10 +153,10 @@ int main(int argc, char *argv[])
 //   std::cout << "fastPatchDifference: " << fastPatchDifference << std::endl;
 // 
 //   unsigned int iterations = 1e6;
-// 
+//
 //   itk::TimeProbe slowTimer;
 //   slowTimer.Start();
-//   
+//
 //   for(unsigned int i = 0; i < iterations; ++i)
 //     {
 //     float slowPatchDifference = patchCompare.SlowDifference(sourcePatches[patchId]);

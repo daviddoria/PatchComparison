@@ -8,15 +8,15 @@
 #include "itkImageRegionConstIterator.h"
 
 template <typename TImage>
-float SSD<TImage>::Distance
-(const TImage* const image, const itk::ImageRegion<2>& region1, const itk::ImageRegion<2>& region2)
+float SSD<TImage>::Distance(const TImage* const image1, const itk::ImageRegion<2>& region1,
+                            const TImage* const image2, const itk::ImageRegion<2>& region2)
 {
   assert(region1.GetSize() == region2.GetSize());
-  assert(image->GetLargestPossibleRegion().IsInside(region1));
-  assert(image->GetLargestPossibleRegion().IsInside(region2));
+  assert(image1->GetLargestPossibleRegion().IsInside(region1));
+  assert(image2->GetLargestPossibleRegion().IsInside(region2));
 
-  itk::ImageRegionConstIterator<TImage> patch1Iterator(image, region1);
-  itk::ImageRegionConstIterator<TImage> patch2Iterator(image, region2);
+  itk::ImageRegionConstIterator<TImage> patch1Iterator(image1, region1);
+  itk::ImageRegionConstIterator<TImage> patch2Iterator(image2, region2);
 
   float sumSquaredDifferences = 0.0f;
 
@@ -34,12 +34,18 @@ float SSD<TImage>::Distance
     ++patch2Iterator;
     } // end while iterate over sourcePatch
 
-
   unsigned int numberOfPixels = region1.GetNumberOfPixels();
 
   float averageSSD = sumSquaredDifferences / static_cast<float>(numberOfPixels);
 
   return averageSSD;
+}
+
+template <typename TImage>
+float SSD<TImage>::Distance
+(const TImage* const image, const itk::ImageRegion<2>& region1, const itk::ImageRegion<2>& region2)
+{
+  return Distance(image, region1, image, region2);
 }
 
 template <typename TImage>

@@ -39,3 +39,5 @@ SET(PatchComparison_BuildTests OFF CACHE BOOL "PatchComparison_BuildTests")
 if(PatchComparison_BuildTests)
   add_subdirectory(Tests)
 endif()
+
+add_subdirectory(Drivers)
