@@ -32,7 +32,8 @@ endif()
 
 add_library(PatchComparison
 PatchComparison.cpp
-DiffusionDistance.cpp)
+DiffusionDistance.cpp
+PairReader.cpp)
 target_link_libraries(PatchComparison ${ITK_LIBRARIES} ITKHelpers)
 
 SET(PatchComparison_BuildTests OFF CACHE BOOL "PatchComparison_BuildTests")
