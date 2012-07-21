@@ -29,6 +29,7 @@ endif()
 # Submodules
 if(NOT TARGET EigenHelpers)
   add_subdirectory(EigenHelpers)
+  include_directories(${EigenHelpers_includes})
 endif()
 
 if(NOT TARGET Mask)
