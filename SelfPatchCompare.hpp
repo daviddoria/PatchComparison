@@ -22,8 +22,8 @@
 #include "SelfPatchCompare.h"
 
 // Submodules
-#include "Mask/ITKHelpers/Helpers/Helpers.h"
-#include "Mask/ITKHelpers/ITKHelpers.h"
+#include "Helpers/Helpers.h"
+#include "ITKHelpers/ITKHelpers.h"
 #include "Mask/MaskOperations.h"
 
 // STL

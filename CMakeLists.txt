@@ -10,7 +10,8 @@ include_directories(/media/portable/src/Eigen)
 
 # ITK
 FIND_PACKAGE(ITK REQUIRED ITKCommon ITKIOImageBase ITKTestKernel
-             ITKImageIntensity ITKImageFeature ITKMathematicalMorphology ITKBinaryMathematicalMorphology ITKDistanceMap)
+             ITKImageIntensity ITKImageFeature ITKMathematicalMorphology
+             ITKBinaryMathematicalMorphology ITKDistanceMap)
 INCLUDE(${ITK_USE_FILE})
 
 # Boost
