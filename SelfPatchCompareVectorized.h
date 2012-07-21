@@ -34,11 +34,12 @@
 /**
  * This class is for situations when you have a very large set of source patches
  * that are entirely valid, and you want to compare them all to a target patch
- * that is partially masked. It computes the linear offsets of the masked pixels
- * once, and then uses them to do all of the patch comparisons.
+ * that is entirely valid. It first vectorizes all of the patches so that the cache
+ * coherency is much much higher than iterating over image patches. Additionally, 
+ * Eigen's sse2 computations can be used for an even bigger speedup.
  */
 template <typename TImage>
-class SelfPatchCompare
+class SelfPatchCompareVectorized
 {
 public:
 
@@ -81,6 +82,6 @@ protected:
   MatrixType VectorizedPatches;
 };
 
-#include "SelfPatchCompare.hpp"
+#include "SelfPatchCompareVectorized.hpp"
 
 #endif

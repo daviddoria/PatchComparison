@@ -32,9 +32,9 @@
 
 template <typename TImage>
 SelfPatchCompareVectorized<TImage>::SelfPatchCompareVectorized() :
-Image(NULL), MaskImage(NULL), PatchDistanceFunctor(NULL)
+Image(NULL)
 {
-  this->FullyValidMask = Mask::New();
+
 }
 
 template <typename TImage>
@@ -64,10 +64,11 @@ void SelfPatchCompareVectorized<TImage>::ComputePatchScores()
   this->PatchData.clear();
 
   // Get the patch regions corresponding to the columns of VectorizedPatches
+  unsigned int patchRadius = this->TargetRegion.GetSize()[0]/2;
   std::vector<itk::ImageRegion<2> > fullSourcePatches =
-       MaskOperations::GetAllFullyValidRegions(this->MaskImage, patchRadius);
+       ITKHelpers::GetAllPatches(this->Image->GetLargestPossibleRegion(), patchRadius);
 
-  if(fullSourcePatches.size() != this->VectorizedPatches.cols())
+  if(static_cast<int>(fullSourcePatches.size()) != this->VectorizedPatches.cols())
   {
     std::stringstream ss;
     ss << "The number of fullSourcePatches is " << fullSourcePatches.size()
@@ -93,16 +94,29 @@ void SelfPatchCompareVectorized<TImage>::ComputePatchScores()
     throw std::runtime_error("The target patch was not found!");
   }
 
+//   for(unsigned int i = 0; i < fullSourcePatches.size(); ++i)
+//     {
+//     //std::cout << "Comparing " << this->TargetRegion << " to " << fullSourcePatches[i] << std::endl;
+//     float score = (this->VectorizedPatches.col(targetRegionId) -
+//                                   this->VectorizedPatches.col(i)).squaredNorm();
+// 
+//     //std::cout << "score: " << averageAbsoluteScore << std::endl;
+//     PatchDataType patchData;
+//     patchData.first = fullSourcePatches[i];
+//     patchData.second = score;
+//     this->PatchData.push_back(patchData);
+//     }
+
+  VectorType queryVector = this->VectorizedPatches.col(targetRegionId);
+  this->VectorizedPatches.colwise() -= queryVector;
+  VectorType scores = this->VectorizedPatches.colwise().squaredNorm();
+
   for(unsigned int i = 0; i < fullSourcePatches.size(); ++i)
     {
-    //std::cout << "Comparing " << this->TargetRegion << " to " << fullSourcePatches[i] << std::endl;
-    float score = (this->VectorizedPatches.col(targetRegionId) -
-                                  this->VectorizedPatches.col(i)).squaredNorm();
-
     //std::cout << "score: " << averageAbsoluteScore << std::endl;
     PatchDataType patchData;
     patchData.first = fullSourcePatches[i];
-    patchData.second = score;
+    patchData.second = scores[i];
     this->PatchData.push_back(patchData);
     }
 
