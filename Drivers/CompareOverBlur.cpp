@@ -10,17 +10,22 @@
 
 int main(int argc, char* argv[])
 {
-  if(argc != 3)
+  if(argc != 4)
   {
-    std::cerr << "Required arguments: patch1filename patch2filename" << std::endl;
+    std::cerr << "Required arguments: patch1filename patch2filename outputFileName" << std::endl;
     return EXIT_FAILURE;
   }
 
   std::string patch1FileName = argv[1];
   std::string patch2FileName = argv[2];
-  
+  std::string outputFileName = argv[3];
+
+  std::cout << "patch1FileName: " << patch1FileName << std::endl
+            << "patch2FileName: " << patch2FileName << std::endl
+            << "outputFileName: " << outputFileName << std::endl;
+
   typedef itk::VectorImage<unsigned char, 2> ImageType;
-  
+
   typedef  itk::ImageFileReader<ImageType> ImageReaderType;
   ImageReaderType::Pointer patch1Reader = ImageReaderType::New();
   patch1Reader->SetFileName(patch1FileName);
@@ -36,7 +41,7 @@ int main(int argc, char* argv[])
   float sigmaStep = .1;
 
   std::vector<float> distances;
-  for(unsigned int i = 0; i < 20; ++i)
+  for(unsigned int i = 1; i < 20; ++i) // Start at 1 because blur of 0 produces a black image
   {
     float sigma = sigmaStep * static_cast<float>(i);
 
@@ -48,7 +53,17 @@ int main(int argc, char* argv[])
 
     float distance = SSD<ImageType>::Distance(patch1blurred.GetPointer(), patch1blurred->GetLargestPossibleRegion(),
                                               patch2blurred.GetPointer(), patch2blurred->GetLargestPossibleRegion());
+
+    std::cout << "Sigma " << sigma << " : " << distance << std::endl;
     distances.push_back(distance);
+  }
+
+  // Open the output file for writing
+  std::ofstream fout(outputFileName.c_str());
+
+  for(unsigned int i = 0; i < distances.size(); ++i)
+  {
+    fout << distances[i] << std::endl;
   }
 
   return EXIT_SUCCESS;
