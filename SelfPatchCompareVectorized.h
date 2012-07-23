@@ -75,8 +75,14 @@ protected:
   /** Stores a list of source regions and their associated distances. */
   std::vector<PatchDataType> PatchData;
 
-  typedef Eigen::MatrixXi MatrixType;
-  typedef Eigen::VectorXi VectorType;
+//   typedef Eigen::MatrixXi MatrixType;
+//   typedef Eigen::VectorXi VectorType;
+
+  typedef Eigen::Matrix<unsigned char, Eigen::Dynamic, Eigen::Dynamic> MatrixType;
+  typedef Eigen::Matrix<unsigned char, Eigen::Dynamic, 1> VectorType;
+
+//   typedef Eigen::Matrix<short, Eigen::Dynamic, Eigen::Dynamic> MatrixType;
+//   typedef Eigen::Matrix<short, Eigen::Dynamic, 1> VectorType;
 
   /** All of the patches in the image, vectorized.. */
   MatrixType VectorizedPatches;
