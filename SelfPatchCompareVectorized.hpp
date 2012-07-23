@@ -108,9 +108,7 @@ void SelfPatchCompareVectorized<TImage>::ComputePatchScores()
 //     }
 
   VectorType queryVector = this->VectorizedPatches.col(targetRegionId);
-  MatrixType subtracted = this->VectorizedPatches.colwise() - queryVector;
-
-  VectorType scores = subtracted.colwise().squaredNorm();
+  VectorType scores = (this->VectorizedPatches.colwise() - queryVector).colwise().squaredNorm();
 
   for(unsigned int i = 0; i < fullSourcePatches.size(); ++i)
     {
