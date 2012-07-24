@@ -50,4 +50,7 @@ if(PatchComparison_BuildTests)
   add_subdirectory(Tests)
 endif()
 
-add_subdirectory(Drivers)
+SET(PatchComparison_BuildDrivers OFF CACHE BOOL "PatchComparison_BuildDrivers")
+if(PatchComparison_BuildDrivers)
+  add_subdirectory(Drivers)
+endif()
