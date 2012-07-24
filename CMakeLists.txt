@@ -5,12 +5,16 @@ Project(PatchComparison)
 # Necessary for c++11 usage in Helpers subsubmodule
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++0x")
 
+# Set the path to install executables to
+SET( INSTALL_DIR ${CMAKE_INSTALL_PREFIX} )
+
 # Eigen
 include_directories(/media/portable/src/Eigen)
 
 # ITK
 FIND_PACKAGE(ITK REQUIRED ITKCommon ITKIOImageBase ITKTestKernel
-             ITKImageIntensity ITKImageFeature ITKMathematicalMorphology ITKBinaryMathematicalMorphology ITKDistanceMap)
+             ITKImageIntensity ITKImageFeature ITKMathematicalMorphology
+             ITKBinaryMathematicalMorphology ITKDistanceMap)
 INCLUDE(${ITK_USE_FILE})
 
 # Boost
