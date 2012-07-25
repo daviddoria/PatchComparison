@@ -7,7 +7,7 @@
 #include "PatchDistance.h"
 
 template <typename TImage>
-struct LocalPCADistance : public PatchDistance
+struct LocalPCADistance : public PatchDistance<TImage>
 {
   typedef Eigen::MatrixXf MatrixType;
   typedef Eigen::VectorXf VectorType;

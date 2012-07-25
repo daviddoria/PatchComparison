@@ -1,5 +1,5 @@
-#ifndef SSD_H
-#define SSD_H
+#ifndef HistogramDistance_H
+#define HistogramDistance_H
 
 // ITK
 #include "itkImage.h"
@@ -7,13 +7,10 @@
 
 #include "PatchDistance.h"
 
-/** This class computes the average SSD of pixels in two specified regions.
-  * Multiple image types (itk::Image<ScalarType, 2>, itk::VectorImage<ScalarType, 2>,
-  * and itk::Image<itk::CovariantVector<ScalarType, Dimension> >
-  * are handled because the PixelDifferences::SumOfSquaredDifferences can handle those pixel types.
+/** This class computes the histogram distance of pixels in two specified regions.
   */
 template <typename TImage>
-struct SSD : public PatchDistance<TImage>
+struct HistogramDistance : public PatchDistance<TImage>
 {
   /** The single image distance function that does not use the internal data. */
   static float Distance(const TImage* const image, const itk::ImageRegion<2>& region1,
@@ -29,6 +26,6 @@ struct SSD : public PatchDistance<TImage>
 
 };
 
-#include "SSD.hpp"
+#include "HistogramDistance.hpp"
 
 #endif

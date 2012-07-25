@@ -1,15 +1,15 @@
-#ifndef SSD_HPP
-#define SSD_HPP
+#ifndef HistogramDistance_HPP
+#define HistogramDistance_HPP
 
-#include "SSD.h"
+#include "HistogramDistance.h"
 
 #include "PixelDifferences.h"
 
 #include "itkImageRegionConstIterator.h"
 
 template <typename TImage>
-float SSD<TImage>::Distance(const TImage* const image1, const itk::ImageRegion<2>& region1,
-                            const TImage* const image2, const itk::ImageRegion<2>& region2)
+float HistogramDistance<TImage>::Distance(const TImage* const image1, const itk::ImageRegion<2>& region1,
+                                          const TImage* const image2, const itk::ImageRegion<2>& region2)
 {
   assert(region1.GetSize() == region2.GetSize());
   assert(image1->GetLargestPossibleRegion().IsInside(region1));
@@ -42,18 +42,17 @@ float SSD<TImage>::Distance(const TImage* const image1, const itk::ImageRegion<2
 }
 
 template <typename TImage>
-float SSD<TImage>::Distance
+float HistogramDistance<TImage>::Distance
 (const TImage* const image, const itk::ImageRegion<2>& region1, const itk::ImageRegion<2>& region2)
 {
   return Distance(image, region1, image, region2);
 }
 
 template <typename TImage>
-float SSD<TImage>::Distance(const itk::ImageRegion<2>& region1,
+float HistogramDistance<TImage>::Distance(const itk::ImageRegion<2>& region1,
                             const itk::ImageRegion<2>& region2)
 {
   return Distance(this->Image, region1, region2);
 }
-
 
 #endif

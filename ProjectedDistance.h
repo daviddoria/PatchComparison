@@ -11,7 +11,7 @@
 #include "PatchDistance.h"
 
 template <typename TImage>
-struct ProjectedDistance : public PatchDistance
+struct ProjectedDistance : public PatchDistance<TImage>
 {
   typedef Eigen::MatrixXf MatrixType;
   typedef Eigen::VectorXf VectorType;

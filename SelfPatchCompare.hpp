@@ -112,7 +112,7 @@ SelfPatchCompare<TImage>::GetPatchData()
 }
 
 template <typename TImage>
-void SelfPatchCompare<TImage>::SetPatchDistanceFunctor(PatchDistance* const patchDistanceFunctor)
+void SelfPatchCompare<TImage>::SetPatchDistanceFunctor(PatchDistance<TImage>* const patchDistanceFunctor)
 {
   this->PatchDistanceFunctor = patchDistanceFunctor;
 }

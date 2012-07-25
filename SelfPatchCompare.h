@@ -67,7 +67,7 @@ public:
   std::vector<PatchDataType> GetPatchData();
 
   /** Set the function to use to compare patches. */
-  void SetPatchDistanceFunctor(PatchDistance* const patchDistanceFunctor);
+  void SetPatchDistanceFunctor(PatchDistance<TImage>* const patchDistanceFunctor);
 
   /** If we do not want to use a mask, call this function. */
   void CreateFullyValidMask();
@@ -90,7 +90,7 @@ protected:
   std::vector<PatchDataType> PatchData;
 
   /** The functor to use to compare two patches. */
-  PatchDistance* PatchDistanceFunctor;
+  PatchDistance<TImage>* PatchDistanceFunctor;
 };
 
 #include "SelfPatchCompare.hpp"
