@@ -33,6 +33,11 @@ if(NOT TARGET EigenHelpers)
   include_directories(${EigenHelpers_includes})
 endif()
 
+if(NOT TARGET Histogram)
+  add_subdirectory(Histogram)
+  include_directories(${Histogram_includes})
+endif()
+
 if(NOT TARGET Mask)
   add_subdirectory(Mask)
   include_directories(${Mask_includes})
