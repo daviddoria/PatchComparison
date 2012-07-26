@@ -7,3 +7,6 @@
 [submodule "PatchProjection"]
 	path = PatchProjection
 	url = https://github.com/daviddoria/PatchProjection.git
+[submodule "Histogram"]
+	path = Histogram
+	url = https://github.com/daviddoria/Histogram.git

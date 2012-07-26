@@ -3,9 +3,12 @@
 
 #include "HistogramDistance.h"
 
-#include "PixelDifferences.h"
-
+// ITK
 #include "itkImageRegionConstIterator.h"
+
+// Submodules
+#include "Histogram/Histogram.h"
+#include "Helpers/TypeTraits.h"
 
 template <typename TImage>
 float HistogramDistance<TImage>::Distance(const TImage* const image1, const itk::ImageRegion<2>& region1,
@@ -18,27 +21,20 @@ float HistogramDistance<TImage>::Distance(const TImage* const image1, const itk:
   itk::ImageRegionConstIterator<TImage> patch1Iterator(image1, region1);
   itk::ImageRegionConstIterator<TImage> patch2Iterator(image2, region2);
 
-  float sumSquaredDifferences = 0.0f;
+  unsigned int numberOfBinsPerDimension = 20;
+  typename TypeTraits<typename TImage::PixelType>::ComponentType rangeMin = 0;
+  typename TypeTraits<typename TImage::PixelType>::ComponentType rangeMax = 255;
 
-  while(!patch1Iterator.IsAtEnd())
-    {
-    float squaredDifference = PixelDifferences::SumOfSquaredDifferences(patch1Iterator.Get(), patch2Iterator.Get());
+  Histogram::HistogramType histogram1 = Histogram::Compute1DConcatenatedHistogramOfMultiChannelImage(
+                                        image1, region1, numberOfBinsPerDimension,
+                                        rangeMin, rangeMax);
 
-//       std::cout << "Source pixel: " << static_cast<unsigned int>(sourcePixel)
-//                 << " target pixel: " << static_cast<unsigned int>(targetPixel)
-//                 << "Difference: " << difference << " squaredDifference: " << squaredDifference << std::endl;
+  Histogram::HistogramType histogram2 = Histogram::Compute1DConcatenatedHistogramOfMultiChannelImage(
+                                        image2, region2, numberOfBinsPerDimension,
+                                        rangeMin, rangeMax);
 
-    sumSquaredDifferences +=  squaredDifference;
-
-    ++patch1Iterator;
-    ++patch2Iterator;
-    } // end while iterate over sourcePatch
-
-  unsigned int numberOfPixels = region1.GetNumberOfPixels();
-
-  float averageSSD = sumSquaredDifferences / static_cast<float>(numberOfPixels);
-
-  return averageSSD;
+  float distance = Histogram::HistogramDifference(histogram1, histogram2);
+  return distance;
 }
 
 template <typename TImage>
