@@ -2,17 +2,32 @@ cmake_minimum_required(VERSION 2.6)
 
 Project(PatchComparison)
 
-# Necessary for c++11 usage in Helpers subsubmodule
+# Enable c++11
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++0x")
 
 # Set the path to install executables to
 SET( INSTALL_DIR ${CMAKE_INSTALL_PREFIX} )
 
 # Eigen
-include_directories(/media/portable/src/Eigen)
+
+# Tell CMake to also look in the source directory to find some .cmake files (Eigen3)
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_MODULE_PATH})
+
+# Set the CMake variable to the value of the environment variable.
+# If the build is absolutely fresh, this will be the case if the CMake variable EIGEN3_INCLUDE_DIR is not set.
+if(NOT EIGEN3_INCLUDE_DIR)
+  set(EIGEN3_INCLUDE_DIR $ENV{EIGEN3_INCLUDE_DIR})
+  message("Set EIGEN3_INCLUDE_DIR to ${EIGEN3_INCLUDE_DIR} from environment variable of the same name.")
+else()
+  message("EIGEN3_INCLUDE_DIR is ${EIGEN3_INCLUDE_DIR}")
+endif()
+
+FIND_PACKAGE(Eigen3 REQUIRED) #requires FindEigen3.cmake to be in the source directory
+include_directories(${EIGEN3_INCLUDE_DIR})
+
 
 # ITK
-FIND_PACKAGE(ITK REQUIRED ITKCommon ITKIOImageBase ITKTestKernel
+FIND_PACKAGE(ITK REQUIRED ITKCommon ITKIOImageBase ITKTestKernel ITKIOPNG ITKIOMeta
              ITKImageIntensity ITKImageFeature ITKMathematicalMorphology
              ITKBinaryMathematicalMorphology ITKDistanceMap)
 INCLUDE(${ITK_USE_FILE})
@@ -22,10 +37,6 @@ FIND_PACKAGE(Boost COMPONENTS regex) # need the libboost-regex1.48.0 and libboos
 IF (Boost_FOUND)
     INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
 ENDIF()
-
-if(NOT ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
-  set(PatchComparison_includes ${ITKHelpers_includes} ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE)
-endif()
 
 # Submodules
 if(NOT TARGET EigenHelpers)
@@ -48,11 +59,17 @@ if(NOT TARGET PatchProjection)
   include_directories(${PatchProjection_includes})
 endif()
 
+if(NOT ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
+  set(PatchComparison_includes ${EIGEN3_INCLUDE_DIR} ${Mask_includes} ${Histogram_includes}
+      ${PatchProjection_includes}
+      ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE)
+endif()
+
 add_library(PatchComparison
 PatchComparison.cpp
 DiffusionDistance.cpp
 PairReader.cpp)
-target_link_libraries(PatchComparison ${ITK_LIBRARIES} ITKHelpers boost_regex)
+target_link_libraries(PatchComparison ${ITK_LIBRARIES} Mask boost_regex)
 
 SET(PatchComparison_BuildTests OFF CACHE BOOL "PatchComparison_BuildTests")
 if(PatchComparison_BuildTests)
