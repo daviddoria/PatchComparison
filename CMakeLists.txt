@@ -63,6 +63,7 @@ if(NOT ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
   set(PatchComparison_includes ${EIGEN3_INCLUDE_DIR} ${Mask_includes} ${Histogram_includes}
       ${PatchProjection_includes}
       ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE)
+  message("PatchComparison submodule used from ${CMAKE_CURRENT_SOURCE_DIR}")
 endif()
 
 add_library(PatchComparison
