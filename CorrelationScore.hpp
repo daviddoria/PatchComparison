@@ -9,10 +9,10 @@
 #include "itkImageRegion.h"
 #include "itkVectorMagnitudeImageFilter.h"
 
-// Custom
-#include "Mask/ITKHelpers/Helpers/Helpers.h"
-#include "Mask/ITKHelpers/Helpers/Statistics.h"
-#include "Mask/ITKHelpers/ITKHelpers.h"
+// Submodules
+#include <Helpers/Helpers.h>
+#include <Helpers/Statistics.h>
+#include <ITKHelpers/ITKHelpers.h>
 
 /**
 

@@ -3,7 +3,7 @@
 #include <vector>
 
 // Submodules
-#include "ITKHelpers/ITKHelpers.h"
+#include <ITKHelpers/ITKHelpers.h>
 
 // Custom
 #include "SSD.h"

@@ -5,7 +5,7 @@
 #include "AverageValueDifference.h"
 
 // Submodules
-#include "Mask/ITKHelpers/ITKHelpers.h"
+#include <ITKHelpers/ITKHelpers.h>
 
 /**
   * Compute the difference between the averages of each patch.

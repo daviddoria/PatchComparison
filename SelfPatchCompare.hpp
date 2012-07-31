@@ -22,9 +22,9 @@
 #include "SelfPatchCompare.h"
 
 // Submodules
-#include "Helpers/Helpers.h"
-#include "ITKHelpers/ITKHelpers.h"
-#include "Mask/MaskOperations.h"
+#include <Helpers/Helpers.h>
+#include <ITKHelpers/ITKHelpers.h>
+#include <Mask/MaskOperations.h>
 
 // STL
 #include <algorithm> // for sort()

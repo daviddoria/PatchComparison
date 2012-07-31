@@ -22,10 +22,10 @@
 #include "SelfPatchCompareVectorized.h"
 
 // Submodules
-#include "Helpers/Helpers.h"
-#include "ITKHelpers/ITKHelpers.h"
-#include "Mask/MaskOperations.h"
-#include "PatchProjection/PatchProjection.h"
+#include <Helpers/Helpers.h>
+#include <ITKHelpers/ITKHelpers.h>
+#include <Mask/MaskOperations.h>
+#include <PatchProjection/PatchProjection.h>
 
 // STL
 #include <algorithm> // for sort()

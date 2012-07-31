@@ -1,7 +1,7 @@
 #include "PatchComparison.h"
 
 // Submodules
-#include "Mask/ITKHelpers/ITKHelpers.h"
+#include <ITKHelpers/ITKHelpers.h>
 
 #include "CorrelationScore.h"
 #include "SSD.h"
