@@ -1,10 +1,11 @@
 #include "DiffusionDistance.h"
 
+// STL
 #include <stdexcept>
 
-#include "Mask/ITKHelpers/Helpers/Helpers.h"
-
-#include "EigenHelpers/EigenHelpers.h"
+// Submodules
+#include <Helpers/Helpers.h>
+#include <EigenHelpers/EigenHelpers.h>
 
 float DiffusionDistance::SumOfAbsoluteDifference(const std::vector<float>& a, const std::vector<float>& b)
 {

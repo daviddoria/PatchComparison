@@ -8,8 +8,6 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++0x")
 # Set the path to install executables to
 SET( INSTALL_DIR ${CMAKE_INSTALL_PREFIX} )
 
-# Eigen
-
 # Tell CMake to also look in the source directory to find some .cmake files (Eigen3)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_MODULE_PATH})
 
@@ -42,26 +40,29 @@ ENDIF()
 if(NOT TARGET EigenHelpers)
   add_subdirectory(EigenHelpers)
   include_directories(${EigenHelpers_includes})
+  set(PatchComparison_includes ${PatchComparison_includes} ${EigenHelpers_includes})
 endif()
 
 if(NOT TARGET Histogram)
   add_subdirectory(Histogram)
   include_directories(${Histogram_includes})
+  set(PatchComparison_includes ${PatchComparison_includes} ${Histogram_includes})
 endif()
 
 if(NOT TARGET Mask)
   add_subdirectory(Mask)
   include_directories(${Mask_includes})
+  set(PatchComparison_includes ${PatchComparison_includes} ${Mask_includes})
 endif()
 
 if(NOT TARGET PatchProjection)
   add_subdirectory(PatchProjection)
   include_directories(${PatchProjection_includes})
+  set(PatchComparison_includes ${PatchComparison_includes} ${PatchProjection_includes})
 endif()
 
 if(NOT ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
-  set(PatchComparison_includes ${EIGEN3_INCLUDE_DIR} ${Mask_includes} ${Histogram_includes}
-      ${PatchProjection_includes}
+  set(PatchComparison_includes ${EIGEN3_INCLUDE_DIR} ${PatchComparison_includes}
       ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE)
   message("PatchComparison submodule used from ${CMAKE_CURRENT_SOURCE_DIR}")
 endif()
@@ -81,3 +82,6 @@ SET(PatchComparison_BuildDrivers OFF CACHE BOOL "PatchComparison_BuildDrivers")
 if(PatchComparison_BuildDrivers)
   add_subdirectory(Drivers)
 endif()
+
+GET_DIRECTORY_PROPERTY(AllPatchComparisonIncludes INCLUDE_DIRECTORIES)
+message("Final PatchComparison includes: ${AllPatchComparisonIncludes}")

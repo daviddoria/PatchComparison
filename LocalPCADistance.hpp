@@ -4,8 +4,8 @@
 #include "LocalPCADistance.h"
 
 // Submodules
-#include "PatchProjection/PatchProjection.h"
-#include "EigenHelpers/EigenHelpers.h"
+#include <PatchProjection/PatchProjection.h>
+#include <EigenHelpers/EigenHelpers.h>
 
 template <typename TImage>
 LocalPCADistance<TImage>::LocalPCADistance() : Image(NULL)

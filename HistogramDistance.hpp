@@ -7,8 +7,8 @@
 #include "itkImageRegionConstIterator.h"
 
 // Submodules
-#include "Histogram/Histogram.h"
-#include "Helpers/TypeTraits.h"
+#include <Histogram/Histogram.h>
+#include <Helpers/TypeTraits.h>
 
 template <typename TImage>
 float HistogramDistance<TImage>::Distance(const TImage* const image1, const itk::ImageRegion<2>& region1,
