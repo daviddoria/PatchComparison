@@ -23,7 +23,7 @@ float HistogramDistance<TImage>::Distance(const TImage* const image1, const itk:
   typename TypeTraits<typename TImage::PixelType>::ComponentType rangeMin = 0;
   typename TypeTraits<typename TImage::PixelType>::ComponentType rangeMax = 255;
 
-  std::cout << "rangeMin: " << rangeMin << " rangeMax: " << rangeMax << std::endl;
+  std::cout << "rangeMin: " << static_cast<int>(rangeMin) << " rangeMax: " << static_cast<int>(rangeMax) << std::endl;
   
   Histogram<int>::HistogramType histogram1 = Histogram<int>::ComputeImageHistogram1D(
                                         image1, region1, numberOfBinsPerDimension,
@@ -33,8 +33,11 @@ float HistogramDistance<TImage>::Distance(const TImage* const image1, const itk:
                                         image2, region2, numberOfBinsPerDimension,
                                         rangeMin, rangeMax);
 
-  Histogram<int>::OutputHistogram(histogram1);
-  Histogram<int>::OutputHistogram(histogram2);
+  std::cout << "Histogram 1: " << std::endl;
+  Histogram<int>::OutputHistogram(histogram1); std::cout << std::endl;
+
+  std::cout << "Histogram 2: " << std::endl;
+  Histogram<int>::OutputHistogram(histogram2); std::cout << std::endl;
   
   float distance = Histogram<int>::HistogramDifference(histogram1, histogram2);
   return distance;
