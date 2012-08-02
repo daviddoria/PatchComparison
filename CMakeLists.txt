@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
 
 Project(PatchComparison)
+SET(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Enable c++11
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++0x")
@@ -22,7 +23,7 @@ endif()
 
 FIND_PACKAGE(Eigen3 REQUIRED) #requires FindEigen3.cmake to be in the source directory
 include_directories(${EIGEN3_INCLUDE_DIR})
-
+set(PatchComparison_includes ${PatchComparison_includes} ${EIGEN3_INCLUDE_DIR})
 
 # ITK
 FIND_PACKAGE(ITK REQUIRED ITKCommon ITKIOImageBase ITKTestKernel ITKIOPNG ITKIOMeta
@@ -41,29 +42,34 @@ if(NOT TARGET EigenHelpers)
   add_subdirectory(EigenHelpers)
   include_directories(${EigenHelpers_includes})
   set(PatchComparison_includes ${PatchComparison_includes} ${EigenHelpers_includes})
+  set(PatchComparison_libraries ${PatchComparison_libraries} ${EigenHelpers_libraries})
 endif()
 
 if(NOT TARGET Histogram)
   add_subdirectory(Histogram)
   include_directories(${Histogram_includes})
   set(PatchComparison_includes ${PatchComparison_includes} ${Histogram_includes})
+  set(PatchComparison_libraries ${PatchComparison_libraries}) # this is a header-only library, so nothing is added
 endif()
 
 if(NOT TARGET Mask)
   add_subdirectory(Mask)
   include_directories(${Mask_includes})
   set(PatchComparison_includes ${PatchComparison_includes} ${Mask_includes})
+  set(PatchComparison_libraries ${PatchComparison_libraries} ${Mask_libraries})
 endif()
 
 if(NOT TARGET PatchProjection)
   add_subdirectory(PatchProjection)
   include_directories(${PatchProjection_includes})
   set(PatchComparison_includes ${PatchComparison_includes} ${PatchProjection_includes})
+  set(PatchComparison_libraries ${PatchComparison_libraries}) # this is a header-only library, so nothing is added
 endif()
 
 if(NOT ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
-  set(PatchComparison_includes ${EIGEN3_INCLUDE_DIR} ${PatchComparison_includes}
+  set(PatchComparison_includes ${PatchComparison_includes}
       ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE)
+  set(PatchComparison_libraries ${PatchComparison_libraries} PatchComparison PARENT_SCOPE)
   message("PatchComparison submodule used from ${CMAKE_CURRENT_SOURCE_DIR}")
 endif()
 
@@ -71,7 +77,7 @@ add_library(PatchComparison
 PatchComparison.cpp
 DiffusionDistance.cpp
 PairReader.cpp)
-target_link_libraries(PatchComparison ${ITK_LIBRARIES} Mask boost_regex)
+target_link_libraries(PatchComparison ${PatchComparison_libraries} boost_regex)
 
 SET(PatchComparison_BuildTests OFF CACHE BOOL "PatchComparison_BuildTests")
 if(PatchComparison_BuildTests)
