@@ -18,22 +18,25 @@ float HistogramDistance<TImage>::Distance(const TImage* const image1, const itk:
   assert(image1->GetLargestPossibleRegion().IsInside(region1));
   assert(image2->GetLargestPossibleRegion().IsInside(region2));
 
-  itk::ImageRegionConstIterator<TImage> patch1Iterator(image1, region1);
-  itk::ImageRegionConstIterator<TImage> patch2Iterator(image2, region2);
 
   unsigned int numberOfBinsPerDimension = 20;
   typename TypeTraits<typename TImage::PixelType>::ComponentType rangeMin = 0;
   typename TypeTraits<typename TImage::PixelType>::ComponentType rangeMax = 255;
 
-  Histogram::HistogramType histogram1 = Histogram::Compute1DConcatenatedHistogramOfMultiChannelImage(
+  std::cout << "rangeMin: " << rangeMin << " rangeMax: " << rangeMax << std::endl;
+  
+  Histogram<int>::HistogramType histogram1 = Histogram<int>::ComputeImageHistogram1D(
                                         image1, region1, numberOfBinsPerDimension,
                                         rangeMin, rangeMax);
 
-  Histogram::HistogramType histogram2 = Histogram::Compute1DConcatenatedHistogramOfMultiChannelImage(
+  Histogram<int>::HistogramType histogram2 = Histogram<int>::ComputeImageHistogram1D(
                                         image2, region2, numberOfBinsPerDimension,
                                         rangeMin, rangeMax);
 
-  float distance = Histogram::HistogramDifference(histogram1, histogram2);
+  Histogram<int>::OutputHistogram(histogram1);
+  Histogram<int>::OutputHistogram(histogram2);
+  
+  float distance = Histogram<int>::HistogramDifference(histogram1, histogram2);
   return distance;
 }
 
