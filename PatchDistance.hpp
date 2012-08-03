@@ -9,4 +9,10 @@ void PatchDistance<TImage>::SetImage(TImage* const image)
   this->Image = image;
 }
 
+template <typename TImage>
+void PatchDistance<TImage>::SetDistanceNameModifier(const std::string& distanceNameModifier)
+{
+  this->DistanceNameModifier = distanceNameModifier;
+}
+
 #endif

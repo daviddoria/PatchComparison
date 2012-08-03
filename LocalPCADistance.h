@@ -35,6 +35,7 @@ public:
   /** Set the image that the patches refer to. */
   void SetImage(TImage* const image);
 
+  std::string GetDistanceName() { return "LocalPCADistance";}
 private:
 
   /** The image that the patches refer to. */

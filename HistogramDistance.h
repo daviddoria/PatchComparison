@@ -24,6 +24,7 @@ struct HistogramDistance : public PatchDistance<TImage>
   float Distance(const itk::ImageRegion<2>& region1,
                  const itk::ImageRegion<2>& region2);
 
+  std::string GetDistanceName() { return "HistogramDistance_" + this->DistanceNameModifier;}
 };
 
 #include "HistogramDistance.hpp"

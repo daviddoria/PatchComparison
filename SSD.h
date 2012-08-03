@@ -27,6 +27,7 @@ struct SSD : public PatchDistance<TImage>
   float Distance(const itk::ImageRegion<2>& region1,
                  const itk::ImageRegion<2>& region2);
 
+  std::string GetDistanceName() { return "SSD";}
 };
 
 #include "SSD.hpp"
