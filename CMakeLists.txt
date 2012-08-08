@@ -21,15 +21,19 @@ else()
   message("EIGEN3_INCLUDE_DIR is ${EIGEN3_INCLUDE_DIR}")
 endif()
 
-FIND_PACKAGE(Eigen3 REQUIRED) #requires FindEigen3.cmake to be in the source directory
-include_directories(${EIGEN3_INCLUDE_DIR})
-set(PatchComparison_includes ${PatchComparison_includes} ${EIGEN3_INCLUDE_DIR})
+if(NOT EIGEN3_FOUND)
+  FIND_PACKAGE(Eigen3 REQUIRED) #requires FindEigen3.cmake to be in the source directory
+  include_directories(${EIGEN3_INCLUDE_DIR})
+  set(PatchComparison_includes ${PatchComparison_includes} ${EIGEN3_INCLUDE_DIR})
+endif()
 
 # ITK
-FIND_PACKAGE(ITK REQUIRED ITKCommon ITKIOImageBase ITKTestKernel ITKIOPNG ITKIOMeta
-             ITKImageIntensity ITKImageFeature ITKMathematicalMorphology
-             ITKBinaryMathematicalMorphology ITKDistanceMap)
-INCLUDE(${ITK_USE_FILE})
+if(NOT ITK_FOUND)
+  FIND_PACKAGE(ITK REQUIRED ITKCommon ITKIOImageBase ITKTestKernel ITKIOPNG ITKIOMeta
+              ITKImageIntensity ITKImageFeature ITKMathematicalMorphology
+              ITKBinaryMathematicalMorphology ITKDistanceMap)
+  INCLUDE(${ITK_USE_FILE})
+endif()
 
 # Boost
 FIND_PACKAGE(Boost COMPONENTS regex) # need the libboost-regex1.48.0 and libboost-regex1.48.0-dev packages installed (Ubuntu). Without the -dev package, CMake says "Could NOT find Boost."
