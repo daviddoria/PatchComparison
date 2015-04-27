@@ -33,6 +33,11 @@ struct ProjectedDistance : public PatchDistance<TImage>
   /** Set the projection matrix. */
   void SetProjectionMatrix(const MatrixType& projectionMatrix);
 
+  /** Retrieve the name of the distance object. */
+  std::string GetDistanceName()
+  {
+    return "ProjectedDistance";
+  }
 private:
 
   /** The image that the patches refer to. */
