@@ -86,25 +86,24 @@ int main(int argc, char *argv[])
   imageWriter->Update();
 
   // Generate a random mask
-  itk::RandomImageSource<Mask>::Pointer maskSource =
-    itk::RandomImageSource<Mask>::New();
-  maskSource->SetNumberOfThreads(1); // to produce non-random results
-  maskSource->SetSize(size);
-  maskSource->SetMin(0);
-  maskSource->SetMax(255);
-  maskSource->Update();
+  Mask::Pointer mask = Mask::New();
+  mask->SetRegions(image->GetLargestPossibleRegion());
+  mask->Allocate();
+  itk::ImageRegionIterator<Mask> maskIterator(mask, mask->GetLargestPossibleRegion());
 
-  // Threshold the mask
-  //typedef itk::ThresholdImageFilter <UnsignedCharImageType> ThresholdImageFilterType;
-  typedef itk::BinaryThresholdImageFilter <Mask, Mask> ThresholdImageFilterType;
-  ThresholdImageFilterType::Pointer thresholdFilter = ThresholdImageFilterType::New();
-  thresholdFilter->SetInput(maskSource->GetOutput());
-  thresholdFilter->SetLowerThreshold(0);
-  thresholdFilter->SetUpperThreshold(122);
-  thresholdFilter->SetOutsideValue(1);
-  thresholdFilter->SetInsideValue(0);
-  thresholdFilter->Update();
-  Mask::Pointer mask = thresholdFilter->GetOutput();
+  while(!maskIterator.IsAtEnd())
+  {
+    float r = RandomFloat();
+    if(r < 0.5)
+    {
+        maskIterator.Set(HoleMaskPixelTypeEnum::VALID);
+    }
+    else
+    {
+        maskIterator.Set(HoleMaskPixelTypeEnum::HOLE);
+    }
+    ++maskIterator;
+  }
 
   // Write the mask
   itk::ImageFileWriter<Mask>::Pointer maskWriter =

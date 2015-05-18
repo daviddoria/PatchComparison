@@ -1,9 +1,6 @@
 [submodule "Mask"]
 	path = Mask
 	url = ../Mask.git
-[submodule "EigenHelpers"]
-	path = EigenHelpers
-	url = ../EigenHelpers.git
 [submodule "PatchProjection"]
 	path = PatchProjection
 	url = ../PatchProjection.git

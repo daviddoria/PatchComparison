@@ -44,7 +44,6 @@ IF (Boost_FOUND)
 ENDIF()
 
 # Submodules
-UseSubmodule(EigenHelpers PatchComparison)
 UseSubmodule(Histogram PatchComparison)
 UseSubmodule(Mask PatchComparison)
 UseSubmodule(PatchProjection PatchComparison)
