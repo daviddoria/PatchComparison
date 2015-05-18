@@ -3,8 +3,10 @@ cmake_minimum_required(VERSION 2.6)
 Project(PatchComparison)
 SET(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+add_subdirectory(CMakeHelpers)
+
 # Enable c++11
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++0x")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++11")
 
 # Set the path to install executables to
 SET( INSTALL_DIR ${CMAKE_INSTALL_PREFIX} )
@@ -42,40 +44,12 @@ IF (Boost_FOUND)
 ENDIF()
 
 # Submodules
-if(NOT TARGET EigenHelpers)
-  add_subdirectory(EigenHelpers)
-  include_directories(${EigenHelpers_includes})
-  set(PatchComparison_includes ${PatchComparison_includes} ${EigenHelpers_includes})
-  set(PatchComparison_libraries ${PatchComparison_libraries} ${EigenHelpers_libraries})
-endif()
+UseSubmodule(EigenHelpers PatchComparison)
+UseSubmodule(Histogram PatchComparison)
+UseSubmodule(Mask PatchComparison)
+UseSubmodule(PatchProjection PatchComparison)
 
-if(NOT TARGET Histogram)
-  add_subdirectory(Histogram)
-  include_directories(${Histogram_includes})
-  set(PatchComparison_includes ${PatchComparison_includes} ${Histogram_includes})
-  set(PatchComparison_libraries ${PatchComparison_libraries}) # this is a header-only library, so nothing is added
-endif()
-
-if(NOT TARGET Mask)
-  add_subdirectory(Mask)
-  include_directories(${Mask_includes})
-  set(PatchComparison_includes ${PatchComparison_includes} ${Mask_includes})
-  set(PatchComparison_libraries ${PatchComparison_libraries} ${Mask_libraries})
-endif()
-
-if(NOT TARGET PatchProjection)
-  add_subdirectory(PatchProjection)
-  include_directories(${PatchProjection_includes})
-  set(PatchComparison_includes ${PatchComparison_includes} ${PatchProjection_includes})
-  set(PatchComparison_libraries ${PatchComparison_libraries}) # this is a header-only library, so nothing is added
-endif()
-
-if(NOT ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
-  set(PatchComparison_includes ${PatchComparison_includes}
-      ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE)
-  set(PatchComparison_libraries ${PatchComparison_libraries} PatchComparison PARENT_SCOPE)
-  message("PatchComparison submodule used from ${CMAKE_CURRENT_SOURCE_DIR}")
-endif()
+CreateSubmodule(PatchComparison)
 
 add_library(PatchComparison
 PatchComparison.cpp
@@ -93,5 +67,5 @@ if(PatchComparison_BuildDrivers)
   add_subdirectory(Drivers)
 endif()
 
-GET_DIRECTORY_PROPERTY(AllPatchComparisonIncludes INCLUDE_DIRECTORIES)
-message("Final PatchComparison includes: ${AllPatchComparisonIncludes}")
+#GET_DIRECTORY_PROPERTY(AllPatchComparisonIncludes INCLUDE_DIRECTORIES)
+#message("Final PatchComparison includes: ${AllPatchComparisonIncludes}")

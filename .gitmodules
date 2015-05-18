@@ -1,12 +1,15 @@
 [submodule "Mask"]
 	path = Mask
-	url = https://github.com/daviddoria/Mask.git
+	url = ../Mask.git
 [submodule "EigenHelpers"]
 	path = EigenHelpers
-	url = https://github.com/daviddoria/EigenHelpers.git
+	url = ../EigenHelpers.git
 [submodule "PatchProjection"]
 	path = PatchProjection
-	url = https://github.com/daviddoria/PatchProjection.git
+	url = ../PatchProjection.git
 [submodule "Histogram"]
 	path = Histogram
-	url = https://github.com/daviddoria/Histogram.git
+	url = ../Histogram.git
+[submodule "CMakeHelpers"]
+	path = CMakeHelpers
+	url = ../CMakeHelpers.git
