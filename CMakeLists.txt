@@ -56,6 +56,47 @@ DiffusionDistance.cpp
 PairReader.cpp)
 target_link_libraries(PatchComparison ${PatchComparison_libraries} boost_regex)
 
+# Add non-compiled files to the project
+add_custom_target(PatchComparisonSources SOURCES
+AverageValueDifference.h
+HistogramDistance.h
+PatchComparison.h
+ProjectedDistance.h
+SelfPatchCompareLocalOptimization.h
+TruncatedQuadraticDifference.h
+WeightedSSD.h
+CorrelationScore.h
+LocalPCADistance.h
+PatchDistance.h
+SelfDeviationWeightedSSD.h
+SelfPatchCompareVectorized.h
+VarianceDifference.h
+DiffusionDistance.h
+PairReader.h
+PixelDifferences.h
+SelfPatchCompare.h
+SSD.h
+VarianceWeightedSSD.h
+
+AverageValueDifference.hpp
+HistogramDistance.hpp
+PixelDifferences.hpp
+SelfPatchCompare.hpp
+SSD.hpp
+VarianceWeightedSSD.hpp
+CorrelationScore.hpp
+LocalPCADistance.hpp
+ProjectedDistance.hpp
+SelfPatchCompareLocalOptimization.hpp
+TruncatedQuadraticDifference.hpp
+WeightedSSD.hpp
+DiffusionDistance.hpp
+PatchDistance.hpp
+SelfDeviationWeightedSSD.hpp
+SelfPatchCompareVectorized.hpp
+VarianceDifference.hpp
+)
+
 SET(PatchComparison_BuildTests OFF CACHE BOOL "PatchComparison_BuildTests")
 if(PatchComparison_BuildTests)
   add_subdirectory(Tests)
@@ -65,6 +106,3 @@ SET(PatchComparison_BuildDrivers OFF CACHE BOOL "PatchComparison_BuildDrivers")
 if(PatchComparison_BuildDrivers)
   add_subdirectory(Drivers)
 endif()
-
-#GET_DIRECTORY_PROPERTY(AllPatchComparisonIncludes INCLUDE_DIRECTORIES)
-#message("Final PatchComparison includes: ${AllPatchComparisonIncludes}")

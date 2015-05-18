@@ -46,7 +46,7 @@ void SelfPatchCompare<TImage>::CreateFullyValidMask()
 {
   this->FullyValidMask->SetRegions(this->Image->GetLargestPossibleRegion());
   this->FullyValidMask->Allocate();
-  ITKHelpers::SetImageToConstant(this->FullyValidMask.GetPointer(), this->FullyValidMask->GetValidValue());
+  ITKHelpers::SetImageToConstant(this->FullyValidMask.GetPointer(), HoleMaskPixelTypeEnum::VALID);
 
   this->MaskImage = this->FullyValidMask;
 }
